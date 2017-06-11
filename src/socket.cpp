@@ -1,8 +1,47 @@
 #include "socket.hpp"
 
 namespace socketx{
-    /*Connect the file descriptor to rio struct*/
-        void rio_readinitb(int fd){
+
+        /*********class socket***********/
+
+         /*Constructor*/
+        socket::socket(){
+            hostlen = sizeof(struct sockaddr_storage);
+            socketfd = -1;
+        }
+
+        socket::~socket(){
+            close(socketfd);
+        }
+
+
+        /*Return the hostname and port of the host it connect currently*/
+        std::string socket::get_hostname(){
+            struct sockaddr_in addr;
+            socklen_t addr_len;
+            getsockname(socketfd,(struct sockaddr *)&addr,&addr_len);
+            return inet_ntoa(addr.sin_addr);
+        }
+        
+        
+        std::string socket::get_peername(int fd){
+            struct sockaddr_in addr;
+            socklen_t addr_len;
+            getpeername(fd,(struct sockaddr *)&addr,&addr_len);
+            return inet_ntoa(addr.sin_addr);
+        }
+
+        size_t socket::get_port(){
+            struct sockaddr_in addr;
+            socklen_t addr_len;
+            getsockname(socketfd,(struct sockaddr *)&addr,&addr_len);
+            return ntohs(addr.sin_port);
+        }
+
+        /*********class communication***********/
+
+        /*Connect the file descriptor to rio struct*/
+        void communication::rio_readinitb(int fd){
             rio.rio_fd = fd;  
             rio.rio_cnt = 0;  
             rio.rio_bufptr = rio.rio_buf;
@@ -16,7 +55,7 @@ namespace socketx{
         *    entry, rio_read() refills the internal buffer via a call to
         *    read() if the internal buffer is empty.
         */
-        ssize_t rio_read(char *usrbuf, size_t n){
+        ssize_t communication::rio_read(char *usrbuf, size_t n){
             int cnt;
 
             while (rio.rio_cnt <= 0) {  /* Refill if buf is empty */
@@ -42,113 +81,13 @@ namespace socketx{
             return cnt;
         }
 
-         /*Constructor*/
-        socket(){
-            clientfd = -1;
-            listenfd = -1;
+        void communication::communication_init(int fd){
+            rio_readinitb(fd);
         }
 
-        ~socket(){
-            if(clientfd>0) close(clientfd);
-            if(listenfd>0) close(listenfd);
-        }
-        
-        /*Set hints for getaddrinfo function*/
-        int set_protocol(struct addrinfo &hints);
-
-        /*Create a client or a server*/
-        int connect_to(const std::string hostname, const std::string port){
-            struct addrinfo *listp, *p;
-            char *hostname_ = hostname.c_str();
-            char *port_ = port.c_str();
-
-
-            memset(&hints, 0, sizeof(struct addrinfo));
-            hints.ai_socktype = SOCK_STREAM;
-            hints.ai_flags = AI_NUMERICSERV;
-            hints.ai_flags |= AI_ADDRCONFIG;
-            getaddrinfo(hostname_, port_, &hints, &listp);
-
-            for(p=listp;p;p=p->ai_next){
-                if((clientfd=socket(p->ai_family,p->ai_socktype,p->ai_protocol))<0)
-                    continue;
-                
-                if(connect(clientfd,p->ai_addr,p->ai_addrlen)!=-1)
-                    break;
-                close(clientfd);
-            }
-
-            freeaddrinfo(listp);
-            if(!p){
-                printf("connect failed\n");
-                return -1;    
-            }
-            else{
-                printf("connect succeeded\n");
-                return clientfd;
-            }
-        }
-
-        int listen_to(const std::string hostname="", const std::string port){
-            struct addrinfo *listp, *p;
-            int rc, optval=1;
-
-            char *hostname_ = hostname.c_str();
-            char *port_ = port.c_str();
-
-            /* Get a list of potential server addresses */
-            memset(&hints, 0, sizeof(struct addrinfo));
-            hints.ai_socktype = SOCK_STREAM;             /* Accept connections */
-            hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG; /* ... on any IP address */
-            hints.ai_flags |= AI_NUMERICSERV;            /* ... using port number */
-            if ((rc = getaddrinfo(NULL, port_, &hints, &listp)) != 0) {
-                fprintf(stderr, "getaddrinfo failed (port %s): %s\n", port, gai_strerror(rc));
-                return -2;
-            }
-
-            /* Walk the list for one that we can bind to */
-            for (p = listp; p; p = p->ai_next) {
-                /* Create a socket descriptor */
-                if ((listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) < 0) 
-                    continue;  /* Socket failed, try the next */
-
-                /* Eliminates "Address already in use" error from bind */
-                setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,    
-                        (const void *)&optval , sizeof(int));
-
-                /* Bind the descriptor to the address */
-                if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0){
-                    printf("bind succeeded\n");
-                    break; /* Success */
-                }
-                    
-                if (close(listenfd) < 0) { /* Bind failed, try the next */
-                    fprintf(stderr, "open_listenfd close failed: %s\n", strerror(errno));
-                    return -1;
-                }
-            }
-
-            freeaddrinfo(listp);
-
-            if(!p){
-                printf("open listen failed");
-                return -1;
-            }
-
-            if(listen(listenfd, LISTENQ)<0){
-                printf("open listen failed");
-                close(listenfd);
-                return -1;
-            }
-            else{
-                printf("listen succeeded\n");
-            }
-
-            return listenfd;
-        }
 
         /*Send *n* bytes of buffer to the host it connected*/
-        int send(const int fd, const void *buffer, size_t n){
+        ssize_t communication::send(const int fd, const void *buffer, size_t n){
             size_t nleft = n;
             ssize_t nwritten;
             char *bufp = (char *)buffer;
@@ -169,13 +108,13 @@ namespace socketx{
         /*Receive bytes from the host it connected.
         * Save bytes to usrbuf with length n.
         */
-        int recv(void *usrbuf, size_t n){
+        ssize_t communication::recv(void *usrbuf, size_t n){
             size_t nleft = n;
             ssize_t nread;
             char *bufp = (char *)usrbuf;
             
             while (nleft > 0) {
-                if ((nread = rio_read(rp, bufp, nleft)) < 0) 
+                if ((nread = rio_read(bufp, nleft)) < 0) 
                         return -1;          /* errno set by read() */ 
                 else if (nread == 0)
                     break;              /* EOF */
@@ -183,5 +122,147 @@ namespace socketx{
                 bufp += nread;
             }
             return (n - nleft);         /* return >= 0 */
+        }
+
+        ssize_t communication::readline(void *usrbuf, size_t maxlen){
+            int n, rc;
+            char c, *bufp = (char *)usrbuf;
+
+            for (n = 1; n <= maxlen; n++) { 
+                if ((rc = rio_read(&c, 1)) == 1) {
+                    *bufp++ = c;
+                    if (c == '\n') {
+                        n++;
+                        break;
+                    }
+                } else if (rc == 0) {
+                    if (n == 1)
+                        return 0; /* EOF, no data read */
+                    else
+                        break;    /* EOF, some data was read */
+                } else
+                return -1;	  /* Error */
+            }
+            *bufp = 0;
+            return n-1;
+        }
+
+        /*********class serverSocket***********/
+
+        serverSocket::~serverSocket(){
+        }
+
+
+        int serverSocket::listen_to(const std::string port){
+            struct addrinfo *listp, *p;
+            int rc, optval=1;
+
+            const char *port_ = port.c_str();
+
+            /* Get a list of potential server addresses */
+            memset(&hints, 0, sizeof(struct addrinfo));
+            hints.ai_socktype = SOCK_STREAM;             /* Accept connections */
+            hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG; /* ... on any IP address */
+            hints.ai_flags |= AI_NUMERICSERV;            /* ... using port number */
+            if ((rc = getaddrinfo(NULL, port_, &hints, &listp)) != 0) {
+                fprintf(stderr, "getaddrinfo failed (port %s): %s\n", port_, gai_strerror(rc));
+                return -2;
+            }
+
+            /* Walk the list for one that we can bind to */
+            for (p = listp; p; p = p->ai_next) {
+                /* Create a socket descriptor */
+                if ((socketfd = ::socket(p->ai_family, p->ai_socktype, p->ai_protocol)) < 0) 
+                    continue;  /* Socket failed, try the next */
+
+                /* Eliminates "Address already in use" error from bind */
+                setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR,    
+                        (const void *)&optval , sizeof(int));
+
+                /* Bind the descriptor to the address */
+                if (bind(socketfd, p->ai_addr, p->ai_addrlen) == 0){
+                    printf("bind succeeded\n");
+                    break; /* Success */
+                }
+                    
+                if (close(socketfd) < 0) { /* Bind failed, try the next */
+                    fprintf(stderr, "open_listenfd close failed: %s\n", strerror(errno));
+                    return -1;
+                }
+            }
+
+            freeaddrinfo(listp);
+
+            if(!p){
+                printf("open listen failed");
+                return -1;
+            }
+
+            if(listen(socketfd, LISTENQ)<0){
+                printf("open listen failed\n");
+                close(socketfd);
+                return -1;
+            }
+            else{
+                printf("listen succeeded\n");
+            }
+            return socketfd;
+        }
+
+        /*Accept a connection.
+        * Return a file descriptor.
+        */
+        int serverSocket::accept_from(){
+            int connfd = accept(socketfd,(struct sockaddr*)&hostaddr,&hostlen);
+            if(connfd<0) printf("accept failed\n");
+            return connfd;
+        }
+
+        int serverSocket::close_conn(int fd){
+            return close(fd);
+        }
+
+
+        /*********class clientSocket***********/
+
+        /*Create a client or a server*/
+
+        clientSocket::~clientSocket(){
+        }
+
+        int clientSocket::connect_to(const std::string hostname, const std::string port){
+            struct addrinfo *listp, *p;
+            const char *hostname_ = hostname.c_str();
+            const char *port_ = port.c_str();
+
+
+            memset(&hints, 0, sizeof(struct addrinfo));
+            hints.ai_socktype = SOCK_STREAM;
+            hints.ai_flags = AI_NUMERICSERV;
+            hints.ai_flags |= AI_ADDRCONFIG;
+            getaddrinfo(hostname_, port_, &hints, &listp);
+
+            for(p=listp;p;p=p->ai_next){
+                if((socketfd=::socket(p->ai_family,p->ai_socktype,p->ai_protocol))<0)
+                    continue;
+                
+                if(connect(socketfd,p->ai_addr,p->ai_addrlen)!=-1)
+                    break;
+                close(socketfd);
+            }
+
+            freeaddrinfo(listp);
+            if(!p){
+                printf("connect failed\n");
+                return -1;    
+            }
+            else{
+                printf("connect succeeded\n");
+                return socketfd;
+            }
+        }
+
+        int clientSocket::close_conn(int fd){
+            return close(fd);
         }
 }

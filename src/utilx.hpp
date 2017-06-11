@@ -3,17 +3,23 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <arpa/inet.h>
+
 #include <string>
+#include <cstring>
 #include <iostream>
 
 namespace socketx{
     /* $begin rio_t */
     #define RIO_BUFSIZE 8192
+    #define MAXLINE 8192
+    #define LISTENQ 1024
     #define SERVER 0
     #define CLIENT 1
 

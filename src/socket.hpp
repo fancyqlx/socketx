@@ -1,53 +1,83 @@
 #ifndef _SOCKET_HPP_
 #define _SOCKET_HPP_
 
+#include "utilx.hpp"
+
 namespace socketx{
 
-class socket{
-    private:
-        struct rio_t rio;
-        struct addrinfo hints;
-        /*Files descriptors*/
-        int clientfd;
-        int listenfd;
+    class socket{
+        protected:
+            struct addrinfo hints;
+            struct sockaddr_storage hostaddr;
+            socklen_t hostlen;
+            /*Files descriptors*/
+            int socketfd;
+        public:
+            /*Constructor*/
+            socket();
 
-        int host_type;
+            virtual ~socket();
 
-        /*Connect the file descriptor to rio struct*/
-        void rio_readinitb(rio_t *rp, int fd);
+            /*Return the hostname and port of the host it connect currently*/
+            std::string get_hostname();
+            std::string get_peername(int fd);
+            size_t get_port();
+    };
 
-        /* 
-        * rio_read - This is a wrapper for the Unix read() function that
-        *    transfers min(n, rio_cnt) bytes from an internal buffer to a user
-        *    buffer, where n is the number of bytes requested by the user and
-        *    rio_cnt is the number of unread bytes in the internal buffer. On
-        *    entry, rio_read() refills the internal buffer via a call to
-        *    read() if the internal buffer is empty.
-        */
-        ssize_t rio_read(rio_t *rp, char *usrbuf, size_t n);
+    class communication: public socket{
+        protected:
+            rio_t rio;
 
-    public:
-        /*Constructor*/
-        socket();
+            /*Connect the file descriptor to rio struct*/
+            void rio_readinitb(int fd);
 
-        ~socket();
+            /* 
+            * rio_read - This is a wrapper for the Unix read() function that
+            *    transfers min(n, rio_cnt) bytes from an internal buffer to a user
+            *    buffer, where n is the number of bytes requested by the user and
+            *    rio_cnt is the number of unread bytes in the internal buffer. On
+            *    entry, rio_read() refills the internal buffer via a call to
+            *    read() if the internal buffer is empty.
+            */
+            ssize_t rio_read(char *usrbuf, size_t n);
+        public:
 
-        /*Set hints for getaddrinfo function*/
-        int set_protocol(struct addrinfo &hints);
+            void communication_init(int fd);
 
-        /*Create a client or a server*/
-        int connect_to(const std::string hostname, const std::string port);
-        int listen_to(const std::string hostname="", const std::string port);
+            /*Send *n* bytes of buffer to the host it connected*/
+            ssize_t send(const int fd, const void *buffer, size_t n);
 
-        /*Send *n* bytes of buffer to the host it connected*/
-        int send(const int fd, const void *buffer, size_t n);
+            /*Receive bytes from the host it connected.
+            * Save bytes to usrbuf with length n.
+            */
+            ssize_t recv(void *usrbuf, size_t n);
+            ssize_t readline(void *usrbuf, size_t n);
+    };
 
-        /*Receive bytes from the host it connected.
-        * Save bytes to usrbuf with length n.
-        */
-        int recv(const int fd, void *usrbuf, size_t n);
-};
+    class serverSocket: public communication{
+        public:
+            serverSocket()=default;
+            ~serverSocket();
 
+            /*Listen to a port*/
+            int listen_to(const std::string port);
+
+            /*Accept a connection.
+            * Return a file descriptor.
+            */
+            int accept_from();
+
+            int close_conn(int fd);
+    };
+
+    class clientSocket: public communication{
+        public:
+            clientSocket()=default;
+            ~clientSocket();
+            /*Connect to a host*/
+            int connect_to(const std::string hostname, const std::string port);
+            int close_conn(int fd);
+    };
 
 }
 

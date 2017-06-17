@@ -5,21 +5,72 @@
 
 namespace socketx{
 
-    /*Thread safe queue*/
+    /*********Thread safe queue*********/
     template<typename T>
     class squeue{
         private:
+            mutable std::mutex mut;
             std::queue<std::shared_ptr<T>> data_queue;
             std::condition_variable cond;
         public:
             squeue()=default;
-            void wait_pop(T& value);
-            bool try_pop(T& value);
+            void wait_pop(T &value);
+            bool try_pop(T &value);
             std::shared_ptr<T> wait_pop();
             std::shared_ptr<T> try_pop();
             void push<T value>;
             bool empty() const;
     };
+
+    template<typename T>
+    void squeue::wait_pop(T &value){
+        std::unique_lock<std::mutex> lk(mut);
+        cond.wait(lk,[this]{return !data_queue.empty()});
+        value = std::move(*data_queue.front());
+        data_queue.pop();
+    }
+
+    template<typename T>
+    bool squeue::try_pop(T &value){
+        std::lock_guard<std::mutex> lk(mut);
+        if(data_queue.empty())
+            return false;
+        value = std::move(*data_queue.front());
+        data_queue.pop();
+        return true;
+    }
+
+    template<typename T>
+    shared_ptr<T> squeue::wait_pop(){
+        std::unique_lock<std::mutex> lk(mut);
+        cond.wait(lk,[this]{return !data_queue.empty()});
+        std::shared_ptr<T> res = data_queue.front();
+        data_queue.pop();
+        return res;
+    }
+
+    template<typename T>
+    shared_ptr<T> squeue::try_pop(){
+        std::lock_guard<std::mutex> lk(mut);
+        if(data_queue.empty())
+            return std::shared_ptr<T>();
+        std::shared_ptr<T> res = data_queue.front();
+        data_queue.pop();
+        return res;
+    }
+
+    template<typename T>
+    void squeue::push(T value){
+        std::shared_ptr<T> data = std::make_shared<T>(std::move(value));
+        std::lock_guard<std::mutex> lk(muk);
+        data_queue.push(data);
+        cond.notify_one();
+    }
+
+    bool squeue::empty() const{
+        std::lock_guard<std::mutex> lk(mut);
+        return data_queue.empty();
+    }
 
     /*********Thread pool************/
     class thread_pool{

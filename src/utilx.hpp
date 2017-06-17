@@ -14,6 +14,18 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <vector>
+#include <queue>
+
+#include <memory>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <future>
+#include <functional>
+#include <atomic>
+#include <stdexcept>
+
 
 namespace socketx{
     /* $begin rio_t */

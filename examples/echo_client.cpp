@@ -22,6 +22,6 @@ int main(int argc, char **argv){
         client.readline(buf,size);
         fputs(buf,stdout);
     }
-    close(clientfd);
+    client.close_conn();
     exit(0); 
 }

@@ -29,4 +29,4 @@ $(DIR_EXP)/%.o:$(DIR_EXP)/%.cpp
 	g++ $(CFLAGS) -c $< -o $@
 
 clean:
-	rm $(SRC_OBJ) $(EXP_OBJ)
+	rm -f $(SRC_OBJ) $(EXP_OBJ)

@@ -11,7 +11,8 @@ namespace socketx{
         }
 
         socket::~socket(){
-            close(socketfd);
+            if(socketfd != -1) 
+                close(socketfd);
         }
 
 
@@ -222,7 +223,11 @@ namespace socketx{
             return connfd;
         }
 
-
+        int server_socket::close_server(){
+            int ret = close(socketfd);
+            socketfd = -1;
+            return ret;
+        }
 
         /*********class client_socket***********/
 
@@ -263,5 +268,9 @@ namespace socketx{
             }
         }
 
-        
+        int client_socket::close_conn(){
+            int ret = close(socketfd);
+            socketfd = -1;
+            return ret;
+        }
 }

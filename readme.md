@@ -6,6 +6,7 @@ socketx is a lib for wrapping linux APIs for socket programming. It is writen by
 - c++ APIs for socket programming in Linux
 - Provide thread pool
 - Thread safe data structures
+- Support robust writing and reading
 
 ## Quickstart
 

@@ -22,6 +22,8 @@ namespace socketx{
             std::string get_hostname();
             std::string get_peername(int fd);
             size_t get_port();
+            
+            int close_conn(int fd);            
     };
 
     class communication: public socket{
@@ -54,10 +56,10 @@ namespace socketx{
             ssize_t readline(void *usrbuf, size_t n);
     };
 
-    class serverSocket: public communication{
+    class server_socket: public communication{
         public:
-            serverSocket()=default;
-            ~serverSocket();
+            server_socket()=default;
+            ~server_socket();
 
             /*Listen to a port*/
             int listen_to(const std::string port);
@@ -66,17 +68,14 @@ namespace socketx{
             * Return a file descriptor.
             */
             int accept_from();
-
-            int close_conn(int fd);
     };
 
-    class clientSocket: public communication{
+    class client_socket: public communication{
         public:
-            clientSocket()=default;
-            ~clientSocket();
+            client_socket()=default;
+            ~client_socket();
             /*Connect to a host*/
             int connect_to(const std::string hostname, const std::string port);
-            int close_conn(int fd);
     };
 
 }

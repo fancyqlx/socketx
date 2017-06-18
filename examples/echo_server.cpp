@@ -1,4 +1,5 @@
 #include "socket.hpp"
+#include "threadx.hpp"
 #include <iostream>
 #include <string>
 
@@ -12,6 +13,7 @@ void echo(int connfd){
         comm.send(connfd,buf,n);
         fputs(buf,stdout);
     }
+    comm.close_conn(connfd);
 }
 
 int main(int argc,char** argv){
@@ -21,9 +23,11 @@ int main(int argc,char** argv){
         exit(0);
     }
     
-    socketx::serverSocket server;
+    socketx::server_socket server;
     std::string port = argv[1];
     int listenfd = server.listen_to(port);
+
+    socketx::thread_pool pool;
 
     while(1){
         int connfd = server.accept_from();
@@ -31,9 +35,8 @@ int main(int argc,char** argv){
             std::string hostname = server.get_peername(connfd);
             size_t hostport = server.get_port();
             std::cout<<"connected to ("<<hostname<<", "<<hostport<<")"<<std::endl;
-            echo(connfd);
+            pool.submit(std::bind(echo,connfd));
         }
-        server.close_conn(connfd);
     }
     exit(0);
 }

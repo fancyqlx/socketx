@@ -38,6 +38,10 @@ namespace socketx{
             return ntohs(addr.sin_port);
         }
 
+        int socket::close_conn(int fd){
+            return close(fd);
+        }
+
         /*********class communication***********/
 
         /*Connect the file descriptor to rio struct*/
@@ -147,13 +151,13 @@ namespace socketx{
             return n-1;
         }
 
-        /*********class serverSocket***********/
+        /*********class server_socket***********/
 
-        serverSocket::~serverSocket(){
+        server_socket::~server_socket(){
         }
 
 
-        int serverSocket::listen_to(const std::string port){
+        int server_socket::listen_to(const std::string port){
             struct addrinfo *listp, *p;
             int rc, optval=1;
 
@@ -212,25 +216,22 @@ namespace socketx{
         /*Accept a connection.
         * Return a file descriptor.
         */
-        int serverSocket::accept_from(){
+        int server_socket::accept_from(){
             int connfd = accept(socketfd,(struct sockaddr*)&hostaddr,&hostlen);
             if(connfd<0) printf("accept failed\n");
             return connfd;
         }
 
-        int serverSocket::close_conn(int fd){
-            return close(fd);
-        }
 
 
-        /*********class clientSocket***********/
+        /*********class client_socket***********/
 
         /*Create a client or a server*/
 
-        clientSocket::~clientSocket(){
+        client_socket::~client_socket(){
         }
 
-        int clientSocket::connect_to(const std::string hostname, const std::string port){
+        int client_socket::connect_to(const std::string hostname, const std::string port){
             struct addrinfo *listp, *p;
             const char *hostname_ = hostname.c_str();
             const char *port_ = port.c_str();
@@ -262,7 +263,5 @@ namespace socketx{
             }
         }
 
-        int clientSocket::close_conn(int fd){
-            return close(fd);
-        }
+        
 }

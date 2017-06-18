@@ -18,20 +18,20 @@ namespace socketx{
             bool try_pop(T &value);
             std::shared_ptr<T> wait_pop();
             std::shared_ptr<T> try_pop();
-            void push<T value>;
+            void push(T value);
             bool empty() const;
     };
 
     template<typename T>
-    void squeue::wait_pop(T &value){
+    void squeue<T>::wait_pop(T &value){
         std::unique_lock<std::mutex> lk(mut);
-        cond.wait(lk,[this]{return !data_queue.empty()});
+        cond.wait(lk,[this]{return !data_queue.empty();});
         value = std::move(*data_queue.front());
         data_queue.pop();
     }
 
     template<typename T>
-    bool squeue::try_pop(T &value){
+    bool squeue<T>::try_pop(T &value){
         std::lock_guard<std::mutex> lk(mut);
         if(data_queue.empty())
             return false;
@@ -41,16 +41,16 @@ namespace socketx{
     }
 
     template<typename T>
-    shared_ptr<T> squeue::wait_pop(){
+    std::shared_ptr<T> squeue<T>::wait_pop(){
         std::unique_lock<std::mutex> lk(mut);
-        cond.wait(lk,[this]{return !data_queue.empty()});
+        cond.wait(lk,[this]{return !data_queue.empty();});
         std::shared_ptr<T> res = data_queue.front();
         data_queue.pop();
         return res;
     }
 
     template<typename T>
-    shared_ptr<T> squeue::try_pop(){
+    std::shared_ptr<T> squeue<T>::try_pop(){
         std::lock_guard<std::mutex> lk(mut);
         if(data_queue.empty())
             return std::shared_ptr<T>();
@@ -60,14 +60,15 @@ namespace socketx{
     }
 
     template<typename T>
-    void squeue::push(T value){
+    void squeue<T>::push(T value){
         std::shared_ptr<T> data = std::make_shared<T>(std::move(value));
-        std::lock_guard<std::mutex> lk(muk);
+        std::lock_guard<std::mutex> lk(mut);
         data_queue.push(data);
         cond.notify_one();
     }
 
-    bool squeue::empty() const{
+    template<typename T>
+    bool squeue<T>::empty() const{
         std::lock_guard<std::mutex> lk(mut);
         return data_queue.empty();
     }
@@ -88,7 +89,7 @@ namespace socketx{
 
             /*Submit a task f to tasks queue, then wait for the return value.*/
             template<typename F>
-            auto submit<F f) -> std::future<typename std::result_of<F()>::type>;
+            auto submit(F f) -> std::future<typename std::result_of<F()>::type>;
     };
 
     void thread_pool::worker(){
@@ -101,9 +102,9 @@ namespace socketx{
         }
     }
 
-    thread_pool::thread_pool(size_t num=std::thread::hardware_concurrency()):done(false){
+    thread_pool::thread_pool(size_t num=std::thread::hardware_concurrency()):thread_num(num),done(false){
         for(size_t i=0;i<num;++i){
-            workers.push_back(std::thread(thread_pool::worker(),this));
+            workers.push_back(std::thread(&thread_pool::worker,this));
         }
     }
 
@@ -121,7 +122,7 @@ namespace socketx{
         * Instead, making a shared_ptr point to it and invoking it by a lambda function.
         */
         auto task = std::make_shared<std::packaged_task<return_type()>>(std::move(f));
-        std::function<void()> func = [task]{(*task)()};
+        std::function<void()> func = [task]{(*task)();};
         tasks.push(func);
 
         std::future<return_type> res = task->get_future();

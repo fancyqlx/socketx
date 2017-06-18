@@ -5,7 +5,7 @@ SRC = $(wildcard ${DIR_SRC}/*.cpp)
 EXP = $(wildcard ${DIR_EXP}/*.cpp)
 
 VPATH = ./src:./examples
-CFLAGS += -I$(DIR_SRC) -std=c++11
+CFLAGS += -I$(DIR_SRC) -std=c++11 -pthread
 
 SRC_OBJ = $(patsubst %.cpp, %.o, ${SRC})
 EXP_OBJ = $(patsubst %.cpp, %.o, ${EXP})

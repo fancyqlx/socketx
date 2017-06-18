@@ -1,13 +1,18 @@
 # socketx
 
-socketx is a lib for wrapping linux APIs. It is writen by C/C++ and aims to provide C++ interfaces for users.
+socketx is a lib for wrapping linux APIs for socket programming. It is writen by C/C++ and aims to provide C++ interfaces for users.
+
+## Features
+- c++ APIs for socket programming in Linux
+- Provide thread pool
+- Thread safe data structures
 
 ## Quickstart
 
 ### Client
 - Create a client
 ```C++
-socketx::clientSocket client
+socketx::client_socket client
 ```
 - Connect to a host
 ```C++
@@ -17,7 +22,7 @@ client.connect_to(host,port)
 ### Server
 - Create a server
 ```C++
-socketx::serverSocket server
+socketx::server_socket server
 ```
 - Listen to a port
 ```C++
@@ -32,4 +37,16 @@ server.accept_from()
 - Create a communication object
 ```C++
 socketx::communication comm
+```
+
+### Thread pool
+- Create a thread pool
+```C++
+socketx::thread_pool pool;
+socketx::thread_pool pool(4);
+```
+
+- Submit a task
+```C++
+pool.submit(std::bind(task,args));
 ```

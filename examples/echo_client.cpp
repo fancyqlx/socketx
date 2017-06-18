@@ -3,7 +3,7 @@
 #include <string>
 
 int main(int argc, char **argv){
-    socketx::clientSocket client;
+    socketx::client_socket client;
     if(argc!=3) {
         std::cout<<"usage: "<<argv[0]<<"<host> "<<"<port> "<<std::endl;
         exit(0);

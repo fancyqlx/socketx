@@ -79,7 +79,7 @@ namespace socketx{
             std::vector<std::thread> workers;
             socketx::squeue<std::function<void()>> tasks;
             size_t thread_num;
-            std::atomic_bool done;
+            std::atomic<bool> done;
 
             /*Get a task from tasks queue*/
             void worker();

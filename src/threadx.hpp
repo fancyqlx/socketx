@@ -5,7 +5,36 @@
 
 namespace socketx{
 
-    /*********Thread safe queue*********/
+
+    /********** Semaphore ************/
+    class semaphore{
+        private:
+            std::mutex mut;
+            std::condition_variable cv;
+            std::ssize_t count;
+        public:
+            semaphore(ssize_t c);
+            void P();
+            void V();
+    };
+
+    semaphore::semaphore(ssize_t c=0){
+        count = c;
+    }
+
+    void semaphore::P(){
+        std::unique_lock<std::mutex> lk(mut);
+        vc.wait(lk,[this]{return count>0;});
+        --count;
+    }
+
+    void semaphore::V(){
+        std::unique_lock<std::mutex> lk(mut);
+        ++count;
+        cv.notify_one();
+    }
+
+    /********* Thread safe queue *********/
     template<typename T>
     class squeue{
         private:
@@ -73,7 +102,53 @@ namespace socketx{
         return data_queue.empty();
     }
 
-    /*********Thread pool************/
+
+    /********* Circular queue **********/
+    template<typename T>
+    class cirqueue{
+        private:
+            size_t num;
+            size_t front;
+            size_t rear;
+            semaphore slots;
+            semaphore items;
+            semaphore mut;
+            std::vector<std::shared_prt<T>> data;
+        public:
+            cirqueue(size_t n);
+            void wait_pop(T &value);
+            void wait_push(T value);
+    };
+
+    template<typename T>
+    cirqueue<T>::cirqueue(size_t n=0){
+        num = n;
+        front = rear = 0;
+        slots = new semaphore(num);
+        items = new semaphore(0);
+        mut = new semaphore(num);
+        data = vector<std::stared_ptr<T>>(num);
+    }
+    
+    template<typename T>
+    cirqueue<T>::wait_pop(T &value){
+        items.P();
+        mut.P();
+        value = *data[front++%num];
+        mut.V();
+        slots.V();
+    }
+
+    template<typename T>
+    cirqueue<T>::wait_push(T value){
+        slots.P();
+        mut.P();
+        data[front++%num] = std::make_shared<T>(value);
+        mut.V();
+        items.V();
+    }
+
+    /********* Thread pool ************/
     class thread_pool{
         private:
             std::vector<std::thread> workers;

@@ -11,7 +11,7 @@ namespace socketx{
         private:
             std::mutex mut;
             std::condition_variable cv;
-            std::ssize_t count;
+            ssize_t count;
         public:
             semaphore(ssize_t c);
             void P();
@@ -24,7 +24,7 @@ namespace socketx{
 
     void semaphore::P(){
         std::unique_lock<std::mutex> lk(mut);
-        vc.wait(lk,[this]{return count>0;});
+        cv.wait(lk,[this]{return count>0;});
         --count;
     }
 
@@ -113,7 +113,7 @@ namespace socketx{
             semaphore slots;
             semaphore items;
             semaphore mut;
-            std::vector<std::shared_prt<T>> data;
+            std::vector<std::shared_ptr<T>> data;
         public:
             cirqueue(size_t n);
             void wait_pop(T &value);
@@ -127,11 +127,11 @@ namespace socketx{
         slots = new semaphore(num);
         items = new semaphore(0);
         mut = new semaphore(num);
-        data = vector<std::stared_ptr<T>>(num);
+        data = new vector<std::shared_ptr<T>>(num);
     }
     
     template<typename T>
-    cirqueue<T>::wait_pop(T &value){
+    void cirqueue<T>::wait_pop(T &value){
         items.P();
         mut.P();
         value = *data[front++%num];
@@ -140,7 +140,7 @@ namespace socketx{
     }
 
     template<typename T>
-    cirqueue<T>::wait_push(T value){
+    void cirqueue<T>::wait_push(T value){
         slots.P();
         mut.P();
         data[front++%num] = std::make_shared<T>(value);

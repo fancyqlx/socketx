@@ -25,6 +25,9 @@
 #include <functional>
 #include <atomic>
 #include <stdexcept>
+#include <chrono>
+
+#include <random>
 
 
 namespace socketx{

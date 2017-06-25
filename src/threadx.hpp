@@ -18,7 +18,7 @@ namespace socketx{
             void V();
     };
 
-    semaphore::semaphore(ssize_t c=0){
+    semaphore::semaphore(ssize_t c){
         count = c;
     }
 
@@ -110,14 +110,15 @@ namespace socketx{
             size_t num;
             size_t front;
             size_t rear;
-            semaphore slots;
-            semaphore items;
-            semaphore mut;
+            semaphore *slots;
+            semaphore *items;
+            semaphore *mut;
             std::vector<std::shared_ptr<T>> data;
         public:
             cirqueue(size_t n=0);
             void wait_pop(T &value);
             void wait_push(T value);
+            bool empty();
     };
 
     template<typename T>
@@ -127,25 +128,33 @@ namespace socketx{
         slots = new semaphore(num);
         items = new semaphore(0);
         mut = new semaphore(num);
-        data = new std::vector<std::shared_ptr<T>>(num);
+        data = std::vector<std::shared_ptr<T>>(num);
     }
     
     template<typename T>
     void cirqueue<T>::wait_pop(T &value){
-        items.P();
-        mut.P();
+        items->P();
+        mut->P();
         value = *data[front++%num];
-        mut.V();
-        slots.V();
+        mut->V();
+        slots->V();
     }
 
     template<typename T>
     void cirqueue<T>::wait_push(T value){
-        slots.P();
-        mut.P();
+        slots->P();
+        mut->P();
         data[rear++%num] = std::make_shared<T>(value);
-        mut.V();
-        items.V();
+        mut->V();
+        items->V();
+    }
+
+    template<typename T>
+    bool cirqueue<T>::empty(){
+        mut->P();
+        bool ret = data.empty();
+        mut->V();
+        return ret;
     }
 
     /********* Thread pool ************/

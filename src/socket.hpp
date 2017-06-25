@@ -68,7 +68,6 @@ namespace socketx{
             * Return a file descriptor.
             */
             int accept_from();
-            int close_server();
     };
 
     class client_socket: public communication{
@@ -77,7 +76,6 @@ namespace socketx{
             ~client_socket();
             /*Connect to a host*/
             int connect_to(const std::string hostname, const std::string port);
-            int close_conn();
     };
 
 }

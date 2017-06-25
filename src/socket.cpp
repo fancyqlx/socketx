@@ -11,8 +11,6 @@ namespace socketx{
         }
 
         socket::~socket(){
-            if(socketfd != -1) 
-                close(socketfd);
         }
 
 
@@ -223,12 +221,6 @@ namespace socketx{
             return connfd;
         }
 
-        int server_socket::close_server(){
-            int ret = close(socketfd);
-            socketfd = -1;
-            return ret;
-        }
-
         /*********class client_socket***********/
 
         /*Create a client or a server*/
@@ -266,11 +258,5 @@ namespace socketx{
                 printf("connect succeeded\n");
                 return socketfd;
             }
-        }
-
-        int client_socket::close_conn(){
-            int ret = close(socketfd);
-            socketfd = -1;
-            return ret;
         }
 }

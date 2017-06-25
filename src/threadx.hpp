@@ -115,19 +115,19 @@ namespace socketx{
             semaphore mut;
             std::vector<std::shared_ptr<T>> data;
         public:
-            cirqueue(size_t n);
+            cirqueue(size_t n=0);
             void wait_pop(T &value);
             void wait_push(T value);
     };
 
     template<typename T>
-    cirqueue<T>::cirqueue(size_t n=0){
+    cirqueue<T>::cirqueue(size_t n){
         num = n;
         front = rear = 0;
         slots = new semaphore(num);
         items = new semaphore(0);
         mut = new semaphore(num);
-        data = new vector<std::shared_ptr<T>>(num);
+        data = new std::vector<std::shared_ptr<T>>(num);
     }
     
     template<typename T>
@@ -143,7 +143,7 @@ namespace socketx{
     void cirqueue<T>::wait_push(T value){
         slots.P();
         mut.P();
-        data[front++%num] = std::make_shared<T>(value);
+        data[rear++%num] = std::make_shared<T>(value);
         mut.V();
         items.V();
     }

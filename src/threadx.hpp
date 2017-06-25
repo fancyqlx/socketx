@@ -102,7 +102,6 @@ namespace socketx{
         return data_queue.empty();
     }
 
-
     /********* Circular queue **********/
     template<typename T>
     class cirqueue{

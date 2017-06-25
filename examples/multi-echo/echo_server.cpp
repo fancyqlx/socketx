@@ -5,6 +5,7 @@
 
 socketx::cirqueue<std::string> data_queue(100);
 std::vector<int> fdlist;
+std::mutex mut;
 
 void echo_receive(int connfd){
     socketx::communication comm;
@@ -23,9 +24,11 @@ void echo_send(){
     socketx::communication comm;
     while(1){
         data_queue.wait_pop(line);
+        mut.lock();
         for(int i=0;i<fdlist.size();++i){
             comm.send(fdlist[i],line.c_str(),line.size());
         }
+        mut.unlock();
     }
 }
 
@@ -41,7 +44,6 @@ int main(int argc,char** argv){
     int listenfd = server.listen_to(port);
 
     socketx::thread_pool pool(5);
-    
 
     pool.submit(echo_send);
 
@@ -52,7 +54,9 @@ int main(int argc,char** argv){
             size_t hostport = server.get_port();
             std::cout<<"connected to ("<<hostname<<", "<<hostport<<")"<<std::endl;
             pool.submit(std::bind(echo_receive,connfd));
+            mut.lock();
             fdlist.push_back(connfd);
+            mut.unlock();
         }
     }
     exit(0);

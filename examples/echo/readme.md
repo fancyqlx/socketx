@@ -8,3 +8,5 @@ echo is a simply example for illustrating socketx APIs. It consists of clients a
  client.connect_to(host,port);
 ```
 The client can simply communicate with the server by invoking `send_to` and `readline` member functions.
+
+- The server responds each of clients by sending back the messages it received. To manage multiple connections easily, the server utilizes `thread_pool` provided by socketx.

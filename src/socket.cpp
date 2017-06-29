@@ -168,8 +168,9 @@ namespace socketx{
         ssize_t communication::sendmsg(const int fd, const message &msg){
             size_t n = msg.size();
             char * buffer = msg.get_data();
-            /*Send the size of message first*/
+            /*Send the size of the message first*/
             if(send(fd,&n,sizeof(n))){
+                /*Send data*/
                 send(fd,buffer,n);
             }
             return n;
@@ -177,9 +178,13 @@ namespace socketx{
 
         message communication::recvmsg(){
             size_t n = 0;
+            /*Receive the size of the message*/
             if(recv(&n,sizeof(size_t))){
-                
+                /*Recieve the message*/
+                char * data = new char[n];
+                return message(data,n);
             }
+            else return message(nullptr,0);
         }
 
         /*********class server_socket***********/

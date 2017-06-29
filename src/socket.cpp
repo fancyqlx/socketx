@@ -41,6 +41,20 @@ namespace socketx{
             return close(fd);
         }
 
+        /**********class message************/
+        message::message(void * data_, size_t size_){
+            size = size_;
+            data = (char *)data_;
+        }
+
+        size_t message::size(){
+            return size;
+        }
+
+        char * message::get_data(){
+            return data;
+        }
+
         /*********class communication***********/
 
         /*Connect the file descriptor to rio struct*/
@@ -148,6 +162,24 @@ namespace socketx{
             }
             *bufp = 0;
             return n-1;
+        }
+
+        /*Send and receive messages*/
+        ssize_t communication::sendmsg(const int fd, const message &msg){
+            size_t n = msg.size();
+            char * buffer = msg.get_data();
+            /*Send the size of message first*/
+            if(send(fd,&n,sizeof(n))){
+                send(fd,buffer,n);
+            }
+            return n;
+        }
+
+        message communication::recvmsg(){
+            size_t n = 0;
+            if(recv(&n,sizeof(size_t))){
+                
+            }
         }
 
         /*********class server_socket***********/

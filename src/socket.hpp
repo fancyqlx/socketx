@@ -26,6 +26,16 @@ namespace socketx{
             int close_conn(int fd);            
     };
 
+    class message{
+        private:
+            size_t size;
+            char *data;
+        public:
+            message(void * data_, size_t size_);
+            size_t size();
+            char * get_data();
+    };
+
     class communication: public socket{
         protected:
             rio_t rio;
@@ -46,7 +56,9 @@ namespace socketx{
 
             void communication_init(int fd);
 
-            /*Send *n* bytes of buffer to the host it connected*/
+            /*Send *n* bytes of buffer to the host it connected
+            * Return the bytes it sends if succeed, return -1 otherwise.
+            */
             ssize_t send(const int fd, const void *buffer, size_t n);
 
             /*Receive bytes from the host it connected.
@@ -54,6 +66,10 @@ namespace socketx{
             */
             ssize_t recv(void *usrbuf, size_t n);
             ssize_t readline(void *usrbuf, size_t n);
+
+            /*Send and receive messages*/
+            ssize_t sendmsg(const int fd, const message &msg);
+            message recvmsg();
     };
 
     class server_socket: public communication{

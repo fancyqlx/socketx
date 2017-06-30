@@ -43,15 +43,15 @@ namespace socketx{
 
         /**********class message************/
         message::message(void * data_, size_t size_){
-            size = size_;
+            msize = size_;
             data = (char *)data_;
         }
 
-        size_t message::size(){
-            return size;
+        size_t message::size() const{
+            return msize;
         }
 
-        char * message::get_data(){
+        char * message::get_data() const{
             return data;
         }
 

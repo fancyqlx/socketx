@@ -28,16 +28,16 @@ namespace socketx{
 
     class message{
         private:
-            size_t size;
+            size_t msize;
             char *data;
         public:
             message(void * data_, size_t size_);
-            size_t size();
-            char * get_data();
+            size_t size() const;
+            char * get_data() const;
     };
 
     class communication: public socket{
-        protected:
+        private:
             rio_t rio;
 
             /*Connect the file descriptor to rio struct*/

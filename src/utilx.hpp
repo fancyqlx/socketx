@@ -10,12 +10,15 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <sys/select.h>
+#include <sys/time.h>
 
 #include <string>
 #include <cstring>
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <bitset>
 
 #include <memory>
 #include <thread>

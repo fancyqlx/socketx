@@ -31,8 +31,10 @@ namespace socketx{
             size_t msize;
             char *data;
         public:
+            message()=default;
             message(void * data_, size_t size_);
-            size_t size() const;
+            message& operator=(const message &msg);
+            size_t get_size() const;
             char * get_data() const;
     };
 
@@ -92,6 +94,33 @@ namespace socketx{
             ~client_socket();
             /*Connect to a host*/
             int connect_to(const std::string hostname, const std::string port);
+    };
+
+
+    /*In unix, select will change the value of sets.
+    * So we have to reset the set that needs to be selected.
+    * Here we provide a wrapper for automatically managing 
+    * fd_sets and maxfd. By using this wrapper, you need not 
+    * reset the fd_set or compute the maxfd.
+    */
+    class select{
+        private:
+            std::bitset<1024> fd_bitset;
+            void comp_maxfd();
+        public:
+            int maxfd;
+            fd_set readset;
+            fd_set writeset;
+            fd_set exceptset;
+            struct timeval timeout;
+
+            select();
+
+            int select_wrapper();
+            void FD_zero(fd_set *fdset);
+            void FD_set(int fd,fd_set *fdset);
+            void FD_clr(int fd,fd_set *fdset);
+            int FD_isset(int fd,fd_set *fdset);
     };
 
 }

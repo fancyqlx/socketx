@@ -29,7 +29,7 @@ namespace socketx{
         }
     }
     
-    thread_pool::thread_pool(size_t num=std::thread::hardware_concurrency()):thread_num(num),done(false){
+    thread_pool::thread_pool(size_t num):thread_num(num),done(false){
         for(size_t i=0;i<num;++i){
             workers.push_back(std::thread(&thread_pool::worker,this));
         }

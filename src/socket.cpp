@@ -147,6 +147,30 @@ namespace socketx{
         return (n - nleft);         /* return >= 0 */
     }
 
+    /*Override function of recv.
+    * This function needs a fd parameter,
+    * It does not use the internal buffer.
+    */
+    ssize_t communication::recv(const int fd, void *usrbuf, size_t n){
+        size_t nleft = n;
+        ssize_t nread;
+        char *bufp = (char *)usrbuf;
+
+        while (nleft > 0) {
+            if ((nread = read(fd, bufp, nleft)) < 0) {
+                if (errno == EINTR) /* Interrupted by sig handler return */
+                    nread = 0;      /* and call read() again */
+                else
+                    return -1;      /* errno set by read() */ 
+            } 
+            else if (nread == 0)
+                break;              /* EOF */
+            nleft -= nread;
+            bufp += nread;
+        }
+        return (n - nleft);         /* Return >= 0 */
+    }
+
     ssize_t communication::readline(void *usrbuf, size_t maxlen){
         int n, rc;
         char c, *bufp = (char *)usrbuf;
@@ -169,6 +193,7 @@ namespace socketx{
         *bufp = 0;
         return n-1;
     }
+    
 
     /*Send and receive messages*/
     ssize_t communication::sendmsg(const int fd, const message &msg){
@@ -190,6 +215,18 @@ namespace socketx{
             /*Recieve the message*/
             char * data = new char[n];
             recv(data,n);
+            return message(data,n);
+        }
+        else return message(nullptr,0);
+    }
+
+     message communication::recvmsg(const int fd){
+        size_t n = 0;
+        /*Receive the size of the message*/
+        if(recv(fd, &n,sizeof(size_t))>0){
+            /*Recieve the message*/
+            char * data = new char[n];
+            recv(fd, data,n);
             return message(data,n);
         }
         else return message(nullptr,0);

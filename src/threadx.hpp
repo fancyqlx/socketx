@@ -151,7 +151,7 @@ namespace socketx{
             /*Get a task from tasks queue*/
             void worker();
         public:
-            thread_pool(size_t num);
+            thread_pool(size_t num=std::thread::hardware_concurrency());
             virtual ~thread_pool();
 
             /*Submit a task f to tasks queue, then wait for the return value.*/

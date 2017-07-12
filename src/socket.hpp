@@ -54,6 +54,7 @@ namespace socketx{
             *    read() if the internal buffer is empty.
             */
             ssize_t rio_read(char *usrbuf, size_t n);
+            
         public:
 
             void communication_init(int fd);
@@ -65,13 +66,22 @@ namespace socketx{
 
             /*Receive bytes from the host it connected.
             * Save bytes to usrbuf with length n.
+            * fd is initialized by communication_init(),
+            * it means recv is connected to fd.
             */
             ssize_t recv(void *usrbuf, size_t n);
+            /*Override function of recv.
+            * This function needs a fd parameter,
+            * It does not use the internal buffer.
+            */
+            ssize_t recv(const int fd, void *usrbuf, size_t n);
             ssize_t readline(void *usrbuf, size_t n);
+
 
             /*Send and receive messages*/
             ssize_t sendmsg(const int fd, const message &msg);
             message recvmsg();
+            message recvmsg(const int fd);
     };
 
     class server_socket: public communication{

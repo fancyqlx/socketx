@@ -17,12 +17,16 @@ namespace socket{
             void updateEvent(Event *event);
             void deleteEvent(Event *event);
 
+            void setTimeout(int timeout){
+                timeout_ = timeout;
+            }
+
         private:
             
 
-            std::vector<Event *> eventList;
+            std::vector<Event *> eventsList;
             std::vector<struct pollfd> pollfdList;
-            std::map<int, Event*> eventMap;
+            std::map<int, Event*> eventsMap;
 
             int timeout_;
     };

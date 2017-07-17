@@ -12,11 +12,21 @@ namespace socketx{
         vector<Event *> vec;
         for(auto it=pollfdList.begin();it!=pollfdList.end()++it){
             if(it->revents>0){
-                auto event = eventMap[it->fd];
-                vec.push_back(event);
+                auto events = eventMap[it->fd];
+                events->setRevent(it->revents); 
+                vec.push_back(events);
             }
         }
         return vec;
     }
 
+    /*Update or delete an event from eventList*/
+    void Poller::updateEvent(Event *event){
+        if(eventsMap.count(event->getFD())){
+            
+        }
+    }
+    void Poller::deleteEvent(Event *event){
+
+    }
 }

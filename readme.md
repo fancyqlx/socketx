@@ -1,12 +1,17 @@
 
 
-`TODO: Refactor the library`
+`TODO: Refactor the library, the lib is undergoing radical changes...`
 
 # socketx
 
 socketx is a library for wrapping linux APIs for socket programming. It is writen by C/C++ and aims to provide C++ interfaces for users. This library is originally used for some simple projects of myself when I was learning networking programming. You can find more details in some of [Examples](##Examples).
 
+
+
 ## Features
+socketx is based on I/O multiplexing and thread pool. It is a simplified reactor. There is one event demultiplexer for dispatching events, then the events are handled by corresponding callback functions. The library was designed for distributed computing projects, so you may find that it is not applied for I/O intensive works.
+
+
 - c++ APIs for socket programming in Linux
 - Provide thread pool
 - Thread safe data structures

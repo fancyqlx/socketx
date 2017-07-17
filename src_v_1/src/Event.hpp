@@ -1,6 +1,8 @@
 #ifndef EVENT_HPP
 #define EVENT_HPP
 
+#include "utilx.hpp"
+
 namespace socketx{
 
     /*Forward declaration*/
@@ -9,15 +11,16 @@ namespace socketx{
     class Event{
         public:
             Event(EventLoop *loop, int fd);
+            ~Event();
 
-
-            
+            /*Handle the event according to revents*/
             void handleEvent();
             
-            
-
+            /*Regist Read and Write events*/
             void enableReading();
             void enableWriting();
+            void disableReading();
+            void disableWriting();
             
             /*Set callback function*/
             void setReadFunc(const std::function<void()> &func){
@@ -33,6 +36,12 @@ namespace socketx{
             /*Get or set some data member */
             int getFD(){
                 return fd_;
+            }
+            int getEvents(){
+                return events_;
+            }
+            int getRevents(){
+                return revents_;
             }
             void setEvents(int events){
                 events_ = events;

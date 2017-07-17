@@ -1,12 +1,18 @@
 #ifndef POLLER_HPP
 #define POLLER_HPP
 
-namespace socket{
+#include "utilx.hpp"
+#include "Event.hpp"
+
+
+namespace socketx{
     /*Forward declaration*/
     class EventLoop;
 
     class Poller{
         public:
+            Poller();
+            ~Poller();
 
             /*Wrapper function of Linux/Unix poll
             * Return a vector of active events
@@ -22,14 +28,11 @@ namespace socket{
             }
 
         private:
-            
-
             std::vector<Event *> eventsList;
             std::vector<struct pollfd> pollfdList;
-            std::map<int, Event*> eventsMap;
+            std::map<int, Event*> eventsMap; 
 
             int timeout_;
     };
 }
-
 #endif

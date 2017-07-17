@@ -1,11 +1,17 @@
 #ifndef EVENTLOOP_HPP
 #define EVENTLOOP_HPP
 
+#include "utilx.hpp"
+
+#include "Event.hpp"
+#include "Poller.hpp"
+
+
 namespace socketx{
 
     class EventLoop{
         public:
-            EventLoop() = default;
+            EventLoop();
             ~EventLoop();
 
             /* Main Loop
@@ -19,7 +25,8 @@ namespace socketx{
 
         private:
             std::vector<Event*> activeEvents;
-            socketx::Poller poller;
+            socketx::Poller *poller;
+            std::atomic<bool> stop;
     };
 }
 #endif

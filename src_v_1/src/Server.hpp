@@ -12,7 +12,7 @@ namespace socketx{
 
     class Server{
         public:
-            Server(EventLoop *loop);
+            Server(EventLoop *loop, std::string port);
 
             void start();
 
@@ -36,10 +36,12 @@ namespace socketx{
             * This function is used to create a new object
             * Connection as an event listened by EventLoop
             */
-            void newConnection();
+            void newConnection(int fd);
 
             EventLoop *loop_;
             ServerSocket *socket;
+
+            std::string port_;
 
             std::map<int,Connection *> connectionsMap;
 

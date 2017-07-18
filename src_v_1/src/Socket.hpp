@@ -2,6 +2,7 @@
 #define _SOCKET_HPP_
 
 #include "utilx.hpp"
+#include "Event.hpp"
 
 namespace socketx{
 
@@ -10,6 +11,7 @@ namespace socketx{
             struct addrinfo hints;
             struct sockaddr_storage hostaddr;
             socklen_t hostlen;
+
             /*Files descriptors*/
             int socketfd;
         public:
@@ -19,16 +21,19 @@ namespace socketx{
             virtual ~Socket();
 
             /*Return the hostname and port of the host it connect currently*/
-            std::string get_hostname();
-            std::string get_peername(int fd);
-            size_t get_port();
+            std::string getHostname();
+            std::string getPeername();
+            size_t getPort();
+            int getFD(){
+                return socketfd;
+            }
             
             int closeConn();            
     };
 
-    class ServerSocket{
+    class ServerSocket:public Socket{
         public:
-            ServerSocket()=default;
+            ServerSocket(EventLoop *loop, std::string port);
             ~ServerSocket();
 
             /*Listen to a port*/
@@ -38,14 +43,32 @@ namespace socketx{
             * Return a file descriptor.
             */
             int accept();
+
+            void setNewConnctionFunc(const std::function<void(int)> &func){
+                newConnectionFunc = func;
+            }
+            void handleAccept();
+        private:
+            std::string port_;
+            Event *event_;
+            EventLoop *loop_;
+
+            std::function<void(int)> newConnectionFunc;
     };
 
-    class ClientSocket{
+    class ClientSocket:public Socket{
         public:
-            ClientSocket()=default;
+            ClientSocket(EventLoop *loop, std::string hostname, std::string port);
             ~ClientSocket();
             /*Connect to a host*/
             int connect();
+
+            void handleConnect();
+        private:
+            std::string hostname_;
+            std::string port_;
+            Event *event_;
+            EventLoop *loop_;
     };
 }
 

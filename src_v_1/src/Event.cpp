@@ -3,8 +3,8 @@
 
 namespace socketx{
 
-    Event::Event(EventLoop *loop, int fd):
-        loop_(loop),fd_(fd),events_(0),revents_(0){
+    Event::Event(EventLoop *loop):
+        loop_(loop),fd_(-1),events_(0),revents_(0){
             printf("New event established!");
         }
 

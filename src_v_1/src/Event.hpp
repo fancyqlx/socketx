@@ -10,7 +10,7 @@ namespace socketx{
 
     class Event{
         public:
-            Event(EventLoop *loop, int fd);
+            Event(EventLoop *loop);
             ~Event();
 
             /*Handle the event according to revents*/
@@ -42,6 +42,9 @@ namespace socketx{
             }
             int getRevents(){
                 return revents_;
+            }
+            void setFD(int fd){
+                fd_ = fd;
             }
             void setEvents(int events){
                 events_ = events;

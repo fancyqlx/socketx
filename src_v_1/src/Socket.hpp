@@ -27,7 +27,6 @@ namespace socketx{
             int getFD(){
                 return socketfd;
             }
-            
             int closeConn();            
     };
 
@@ -43,6 +42,11 @@ namespace socketx{
             * Return a file descriptor.
             */
             int accept();
+            /*Regist events*/
+            void registEvents(){
+                event_->setFD(socketfd);
+                event_->enableReading();
+            }
 
             void setNewConnctionFunc(const std::function<void(int)> &func){
                 newConnectionFunc = func;

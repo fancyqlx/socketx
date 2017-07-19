@@ -15,13 +15,10 @@ namespace socketx{
     }
 
     void Server::newConnection(int fd){
-        Connection *conn = new Connection(loop_, fd);
+        std::shared_prt<Connection> conn = std::make_shared(loop_, fd);
         if(!connectionsMap.count(fd)){
             connectionsMap[fd] = conn;
-            /*Set user defined function for reading or writing*/
-            conn->setHandleEventsFunc(handleEventsFunc);
-            /*Regist events*/
-            conn->initConnection();
+            currentConn = conn;
             /* Run user defined function for new connection*/
             handleConnectionFunc();
         }

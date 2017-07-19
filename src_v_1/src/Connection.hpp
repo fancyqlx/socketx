@@ -8,13 +8,19 @@ namespace socketx{
 
     /* Forward declaration*/
 
-    class Connection{
+    class Connection:public Socket{
         public:
-            Connection(EventLoop *loop, int sockfd);
+            Connection(EventLoop *loop, int fd);
             ~Connection();
             
             /*Regist events*/
-            void initConnection();
+            void registReadEvnets(){
+                event_->enableReading();
+            }
+            void registWriteEvnets(){
+                event_->enableWriting();
+            }
+
 
             /*Handle events*/
             void handleRead();
@@ -31,7 +37,7 @@ namespace socketx{
 
         private:
             Event *event_;
-            Socket *socket_;
+            EventLoop *loop_;
 
             std::function<void()> handleEventsFunc;
 

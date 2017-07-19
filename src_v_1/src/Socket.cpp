@@ -64,8 +64,7 @@ namespace socketx{
         else{
             printf("listen succeeded\n");
             /* Regist event*/
-            event_->setFD(socketfd);
-            event_->enableReading();
+            registEvents();
         }
         return socketfd;
     }

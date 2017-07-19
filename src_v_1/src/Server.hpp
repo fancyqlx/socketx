@@ -24,10 +24,21 @@ namespace socketx{
                 handleConnectionFunc = func;
             }
             /* Provide an API for users
-            *  to handle events of a connection
+            *  to handle events of a connection.
+            *  Users need to set these functions in their codes
+            *  to regist corresponding events.
             */
-            void setHanldeEventsFunc(std::function<void()> &func){
-                handleEventsFunc = func;
+            void setHanldeReadEvents(const std::function<void()> &func){
+                handleReadEvents = func;
+                currentConn->registReadEvents();
+            }
+            void setHanldeWriteEvents(const std::function<void()> &func){
+                handleWriteEvents = func;
+                currentConn->registWriteEvents();
+            }
+
+            std::shared_ptr<Connection> getCurrentConnection(){
+                return currentConn;
             }
 
         private:
@@ -43,10 +54,12 @@ namespace socketx{
 
             std::string port_;
 
-            std::map<int,Connection *> connectionsMap;
+            std::map<int, std::shared_ptr<Connection>> connectionsMap;
+            std::shared_ptr<Connection> currentConn;
 
             std::function<void()> handleConnectionFunc;
-            std::function<void()> handleEventsFunc;
+            std::function<void(Connection *)> handleReadEvents;
+            std::function<void(Connection *)> handleWriteEvents;
 
     };
 

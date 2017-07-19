@@ -1,21 +1,36 @@
 
 
 `TODO: Refactor the library, the lib is undergoing radical changes...`
+`TODO: We are going to complete the examples of new version of socketx and fix bugs:)`
 
 # socketx
 
 socketx is a library for wrapping linux APIs for socket programming. It is writen by C/C++ and aims to provide C++ interfaces for users. This library is originally used for some simple projects of myself when I was learning networking programming. You can find more details in some of [Examples](##Examples).
 
-
-
 ## Features
 socketx is based on I/O multiplexing and thread pool. It is a simplified reactor. There is one event demultiplexer for dispatching events, then the events are handled by corresponding callback functions. The library was designed for distributed computing projects, so you may find that it is not applied for I/O intensive works.
-
 
 - c++ APIs for socket programming in Linux
 - Provide thread pool
 - Thread safe data structures
 - Support robust writing and reading
+
+## New socketx is coming!
+## QuickStart
+In socketx, you just need to do three things:
+- Think about what to do if a new connection comes
+- What do you want to write if a write events occur.
+- Find a container to save datas when a read events occrus and design your own program to handle these datas.
+
+To achive these targets, you need to complete three functions.
+- NO.1 `void handleConection()`
+- NO.2 `void handleWriteEvents()`
+- NO.3 `void handleReadEvents()`
+
+You can put them all into a class, then the rest of the things will be handled by socketx.
+
+## The old version of socketx is here
+We are not going to update old version anymore...
 
 ## Examples
 - [echo](./examples/echo/)

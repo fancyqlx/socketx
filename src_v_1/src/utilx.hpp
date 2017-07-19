@@ -67,7 +67,7 @@ namespace socketx{
                 data = (char *)data_;
             }
 
-            message& operator=(const message &msg){
+            Message& operator=(const Message &msg){
                 msize = msg.get_size();
                 data = msg.get_data();
                 return *this;

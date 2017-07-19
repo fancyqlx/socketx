@@ -8,7 +8,7 @@ namespace socketx{
         }
 
     Poller::~Poller(){
-        
+         
     }
     /*Wrapper function of Linux/Unix poll
     * Return a vector of active events
@@ -59,7 +59,7 @@ namespace socketx{
             pollfdList.erase(it);
         }
         else{
-            printf("Poller::deleteEvent error! No such an event...");
+            printf("Poller::deleteEvent error! No such an event...\n");
         }
     }
 }

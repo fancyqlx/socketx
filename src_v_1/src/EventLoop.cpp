@@ -15,7 +15,7 @@ namespace socketx{
     *  The Loop will stop when stop falg is set to false
     */
     void EventLoop::loop(){
-        printf("EventLoop starts......");
+        printf("EventLoop starts......\n");
         while(!stop){
             activeEvents.clear();
             activeEvents = poller->poll();
@@ -23,7 +23,7 @@ namespace socketx{
                 (*it)->handleEvent();
             }
         }
-        printf("EventLoop ends......");
+        printf("EventLoop ends......\n");
     }
 
     /*Update events by invoke poller's function*/

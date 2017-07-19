@@ -15,10 +15,10 @@ namespace socketx{
             ~Connection();
             
             /*Regist events*/
-            void registReadEvnets(){
+            void registReadEvents(){
                 event_->enableReading();
             }
-            void registWriteEvnets(){
+            void registWriteEvents(){
                 event_->enableWriting();
             }
 
@@ -29,10 +29,10 @@ namespace socketx{
             void handleError();
 
             /* Set user defined function*/
-            void setHandleReadEvents(std::function<void(Connection *)> &func){
+            void setHandleReadEvents(const std::function<void(Connection *)> &func){
                 handleReadEvents = func;
             }
-             void setHandleWriteEvents(std::function<void(Connection *)> &func){
+             void setHandleWriteEvents(const std::function<void(Connection *)> &func){
                 handleWriteEvents = func;
             }
 
@@ -58,7 +58,7 @@ namespace socketx{
 
 
             /*Send and receive messages*/
-            ssize_t sendMsg(const Message &msg);
+            ssize_t sendmsg(const Message &msg);
             Message recvmsgFromBuffer();
             Message recvmsg();
 
@@ -83,8 +83,7 @@ namespace socketx{
             *    entry, rio_read() refills the internal buffer via a call to
             *    read() if the internal buffer is empty.
             */
-            ssize_t rio_read(char *usrbuf, size_t n);
-
+            ssize_t rio_read(char *usrbuf, size_t n); 
     };
 
 

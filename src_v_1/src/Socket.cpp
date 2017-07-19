@@ -1,7 +1,7 @@
 #include "Socket.hpp"
 
 namespace socketx{
-
+ 
     /*****************Class Socket************************/
     /*Constructor*/
     Socket::Socket(){
@@ -9,7 +9,7 @@ namespace socketx{
         socketfd = -1;
     }
 
-    virtual Socket::~Socket(){
+    Socket::~Socket(){
     }
 
     /*Return the hostname and port of the host it connect currently*/
@@ -20,10 +20,10 @@ namespace socketx{
         return inet_ntoa(addr.sin_addr);
     }
     
-    std::string Socket::getPeername(int fd){
+    std::string Socket::getPeername(){
         struct sockaddr_in addr;
         socklen_t addr_len;
-        getpeername(fd,(struct sockaddr *)&addr,&addr_len);
+        getpeername(socketfd,(struct sockaddr *)&addr,&addr_len);
         return inet_ntoa(addr.sin_addr);
     }
 
@@ -34,8 +34,8 @@ namespace socketx{
         return ntohs(addr.sin_port);
     }
 
-    int Socket::closeConn(int fd){
-        return close(fd);
+    int Socket::closeConn(){
+        return close(socketfd);
     }
 
     /*****************Class ServerSocket************************/
@@ -45,6 +45,10 @@ namespace socketx{
         event_(new Event(loop)){
             event_->setReadFunc(std::bind(&ServerSocket::handleAccept,this));
         }
+
+    ServerSocket::~ServerSocket(){
+
+    }
 
     int ServerSocket::listen(){
 
@@ -120,10 +124,14 @@ namespace socketx{
     }
 
     /*****************Class ClientSocket************************/
-    ClientSocket::ClientSocket(EventLoop *loop, std::string hostname, std::string port)
+    ClientSocket::ClientSocket(std::string hostname, std::string port)
         :hostname_(hostname),
          port_(port){
 
+    }
+
+    ClientSocket::~ClientSocket(){
+        
     }
 
     /*Start to connect to a host. 
@@ -138,21 +146,21 @@ namespace socketx{
 
     int ClientSocket::connect(){
         struct addrinfo *listp, *p;
-        const char *hostname_ = hostname_.c_str();
-        const char *port_ = port_.c_str();
+        const char *hostname = hostname_.c_str();
+        const char *port = port_.c_str();
 
 
         memset(&hints, 0, sizeof(struct addrinfo));
         hints.ai_socktype = SOCK_STREAM;
         hints.ai_flags = AI_NUMERICSERV;
         hints.ai_flags |= AI_ADDRCONFIG;
-        getaddrinfo(hostname_, port_, &hints, &listp);
+        getaddrinfo(hostname, port, &hints, &listp);
 
         for(p=listp;p;p=p->ai_next){
             if((socketfd=::socket(p->ai_family,p->ai_socktype,p->ai_protocol))<0)
                 continue;
             
-            if(connect(socketfd,p->ai_addr,p->ai_addrlen)!=-1)
+            if(::connect(socketfd,p->ai_addr,p->ai_addrlen)!=-1)
                 break;
             close(socketfd);
         }

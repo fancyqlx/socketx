@@ -3,7 +3,7 @@
 
 #include "utilx.hpp"
 #include "Event.hpp"
-
+ 
 namespace socketx{
 
     class Socket{
@@ -17,6 +17,9 @@ namespace socketx{
         public:
             /*Constructor*/
             Socket();
+            Socket(int fd):socketfd(fd){
+
+            }
 
             virtual ~Socket();
 

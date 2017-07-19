@@ -4,7 +4,7 @@ namespace socketx{
 
     Connection::Connection(EventLoop *loop, int fd):
         loop_(loop),
-        socketfd(fd),
+        Socket(fd),
         event_(new Event(loop)){
         /*Set callback functions*/
         event_->setReadFunc(std::bind(&Connection::handleRead, this));
@@ -15,6 +15,10 @@ namespace socketx{
         rio_readinitb(socketfd);
     }
 
+    Connection::~Connection(){
+        
+    }
+
     void Connection::handleRead(){
         handleReadEvents(this);
     }
@@ -22,9 +26,13 @@ namespace socketx{
     void Connection::handleWrite(){
         handleWriteEvents(this);
     }
+ 
+    void Connection::handleError(){
+
+    }
 
     /*Connect the file descriptor to rio struct*/
-    void communication::rio_readinitb(int fd){
+    void Connection::rio_readinitb(int fd){
         rio.rio_fd = fd;  
         rio.rio_cnt = 0;  
         rio.rio_bufptr = rio.rio_buf;
@@ -82,7 +90,7 @@ namespace socketx{
         }
         return n;
     }
-
+ 
     /*Receive bytes from the host it connected.
     * Save bytes to usrbuf with length n.
     */
@@ -151,13 +159,13 @@ namespace socketx{
     
 
     /*Send and receive messages*/
-    ssize_t Connection::sendmsg(const message &msg){
+    ssize_t Connection::sendmsg(const Message &msg){
         size_t n = msg.get_size();
         char * buffer = msg.get_data();
         /*Send the size of the message first*/
-        if(send(socketfd,&n,sizeof(n))>0){
+        if(send(&n,sizeof(n))>0){
             /*Send data*/
-            if(send(socketfd,buffer,n)>0)
+            if(send(buffer,n)>0)
                 return 1;
         }
         return -1;
@@ -170,20 +178,20 @@ namespace socketx{
             /*Recieve the message*/
             char * data = new char[n];
             recvFromBuffer(data,n);
-            return message(data,n);
+            return Message(data,n);
         }
-        else return message(nullptr,0);
+        else return Message(nullptr,0);
     }
 
      Message Connection::recvmsg(){
         size_t n = 0;
         /*Receive the size of the message*/
-        if(recv(socketfd, &n,sizeof(size_t))>0){
+        if(recv(&n,sizeof(size_t))>0){
             /*Recieve the message*/
             char * data = new char[n];
-            recv(socketfd, data,n);
-            return message(data,n);
+            recv(data,n);
+            return Message(data,n);
         }
-        else return message(nullptr,0);
+        else return Message(nullptr,0);
     }
 }

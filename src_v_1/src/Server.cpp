@@ -7,15 +7,15 @@ namespace socketx{
         loop_(loop),
         port_(port),
         socket_(new ServerSocket(loop, port)){
-            socket_->setNewConnctionFunc(std::bind(&Server::newConnection,this,_1));
+            socket_->setNewConnctionFunc(std::bind(&Server::newConnection,this, std::placeholders::_1));
         }
-
+ 
     void Server::start(){
-        socket->listen();
+        socket_->listen();
     }
 
     void Server::newConnection(int fd){
-        std::shared_prt<Connection> conn = std::make_shared(loop_, fd);
+        std::shared_ptr<Connection> conn = std::make_shared<Connection>(loop_, fd);
         if(!connectionsMap.count(fd)){
             connectionsMap[fd] = conn;
             currentConn = conn;
@@ -23,7 +23,7 @@ namespace socketx{
             handleConnectionFunc();
         }
         else{
-            printf("Error: existing file descriptor for a new connection!");
+            printf("Error: existing file descriptor for a new connection!\n");
         }
     }
 

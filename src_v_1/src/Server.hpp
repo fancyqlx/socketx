@@ -9,7 +9,7 @@ namespace socketx{
 
     /* Forward declaration*/
     class EventLoop;
-
+ 
     class Server{
         public:
             Server(EventLoop *loop, std::string port);
@@ -28,14 +28,14 @@ namespace socketx{
             *  Users need to set these functions in their codes
             *  to regist corresponding events.
             */
-            void setHanldeReadEvents(const std::function<void(Connection*)> &func){
+            void setHandleReadEvents(const std::function<void(Connection*)> &func){
                 handleReadEvents = func;
-                currentConn->setHanldeReadEvents(std::bind(&Server::handleReadEvents,this,_1));
+                currentConn->setHandleReadEvents(handleReadEvents);
                 currentConn->registReadEvents();
-            }
-            void setHanldeWriteEvents(const std::function<void(Connection*)> &func){
+            } 
+            void setHandleWriteEvents(const std::function<void(Connection*)> &func){
                 handleWriteEvents = func;
-                currentConn->setHanldeWriteEvents(std::bind(&Server::handleWriteEvents,this,_1));
+                currentConn->setHandleWriteEvents(handleWriteEvents);
                 currentConn->registWriteEvents();
             }
 
@@ -43,7 +43,7 @@ namespace socketx{
             std::shared_ptr<Connection> getCurrentConnection(){
                 return currentConn;
             }
-
+ 
         private:
 
             /* Handle new connections

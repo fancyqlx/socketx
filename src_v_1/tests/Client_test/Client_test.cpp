@@ -5,28 +5,28 @@ class Client_test{
     public:
         Client_test(socketx::EventLoop *loop, std::string hostname, std::string port)
         :loop_(loop), hostname_(hostname),port_(port),
-        client_(new Client(loop,hostname,port)){
+        client_(new socketx::Client(loop,hostname,port)){
             client_->setHandleConnectionFunc(std::bind(&Client_test::handleConnection,this));
         }
 
         void start(){
-            server_->start();
+            client_->start();
         }
 
         void handleConnection(){
             printf("New connection comes, we are going to set read events!!!\n");
-            server_->setHandleReadEvents(std::bind(&Server_test::handleReadEvents,this));
+            client_->setHandleReadEvents(std::bind(&Client_test::handleReadEvents,this));
         }
         void handleReadEvents(){
             printf("Read events....\n");
         }
 
     private:
-        socketx::Eventloop *loop_;
+        socketx::EventLoop *loop_;
         socketx::Client *client_;
         std::string hostname_;
         std::string port_;
-}
+};
 
 
 int main(int argc, char **argv){

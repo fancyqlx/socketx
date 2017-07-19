@@ -20,9 +20,9 @@ namespace socketx{
     }
 
     void Client::newConnection(int fd){
-        currentConn = new Connection(loop_, fd);
+        currentConn = std::make_shared<Connection>(loop_, fd);
         /* Run user defined function for new connection*/
-        handleConnectionFunc();
+        handleConnectionFunc(); 
     }
 
 }

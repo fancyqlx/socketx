@@ -5,7 +5,7 @@ class Server_test{
     public:
         Server_test(socketx::EventLoop *loop, std::string port)
         :loop_(loop), port_(port),
-        server_(new Server(loop,port)){
+        server_(new socketx::Server(loop,port)){
             server_->setHandleConnectionFunc(std::bind(&Server_test::handleConnection,this));
         }
 
@@ -22,10 +22,10 @@ class Server_test{
         }
 
     private:
-        socketx::Eventloop *loop_;
+        socketx::EventLoop *loop_;
         socketx::Server *server_;
         std::string port_;
-}
+};
 
 
 int main(int argc, char **argv){
@@ -37,7 +37,7 @@ int main(int argc, char **argv){
     std::string port(argv[1]);
     socketx::EventLoop loop;
     Server_test server(&loop,port);
-    server.start();
+    server.start(); 
     loop.loop();
 
     return 0;

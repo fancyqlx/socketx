@@ -4,7 +4,7 @@ namespace socketx{
 
     /*********class socket***********/
 
-        /*Constructor*/
+    /*Constructor*/
     socket::socket(){
         hostlen = sizeof(struct sockaddr_storage);
         socketfd = -1;

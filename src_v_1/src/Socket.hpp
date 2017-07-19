@@ -30,7 +30,7 @@ namespace socketx{
             int closeConn();            
     };
 
-    class ServerSocket:public Socket{
+    class ServerSocket: public Socket{
         public:
             ServerSocket(EventLoop *loop, std::string port);
             ~ServerSocket();
@@ -60,19 +60,17 @@ namespace socketx{
             std::function<void(int)> newConnectionFunc;
     };
 
-    class ClientSocket:public Socket{
+    class ClientSocket: public Socket{
         public:
-            ClientSocket(EventLoop *loop, std::string hostname, std::string port);
+            ClientSocket(std::string hostname, std::string port);
             ~ClientSocket();
             /*Connect to a host*/
             int connect();
-
+            
             void handleConnect();
         private:
             std::string hostname_;
             std::string port_;
-            Event *event_;
-            EventLoop *loop_;
     };
 }
 

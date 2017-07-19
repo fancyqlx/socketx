@@ -20,7 +20,7 @@ namespace socketx{
             /* Provide an API for users 
             *  to handle new connection
             */
-            void setHandleConnectionFunc(std::function<void()> &func){
+            void setHandleConnectionFunc(const std::function<void()> &func){
                 handleConnectionFunc = func;
             }
             /* Provide an API for users
@@ -28,15 +28,18 @@ namespace socketx{
             *  Users need to set these functions in their codes
             *  to regist corresponding events.
             */
-            void setHanldeReadEvents(const std::function<void()> &func){
+            void setHanldeReadEvents(const std::function<void(Connection*)> &func){
                 handleReadEvents = func;
+                currentConn->setHanldeReadEvents(std::bind(&Server::handleReadEvents,this,_1));
                 currentConn->registReadEvents();
             }
-            void setHanldeWriteEvents(const std::function<void()> &func){
+            void setHanldeWriteEvents(const std::function<void(Connection*)> &func){
                 handleWriteEvents = func;
+                currentConn->setHanldeWriteEvents(std::bind(&Server::handleWriteEvents,this,_1));
                 currentConn->registWriteEvents();
             }
 
+            /* This function need reture the current connection*/
             std::shared_ptr<Connection> getCurrentConnection(){
                 return currentConn;
             }
@@ -50,7 +53,7 @@ namespace socketx{
             void newConnection(int fd);
 
             EventLoop *loop_;
-            ServerSocket *socket;
+            ServerSocket *socket_;
 
             std::string port_;
 

@@ -6,8 +6,8 @@ namespace socketx{
     Server::Server(EventLoop *loop, std::string port):
         loop_(loop),
         port_(port),
-        socket(new ServerSocket(loop, port)){
-            socket->setNewConnctionFunc(std::bind(&Server::newConnection,this,_1));
+        socket_(new ServerSocket(loop, port)){
+            socket_->setNewConnctionFunc(std::bind(&Server::newConnection,this,_1));
         }
 
     void Server::start(){

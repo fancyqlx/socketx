@@ -2,6 +2,43 @@
 
 namespace socketx{
 
+    /*****************Class Socket************************/
+    /*Constructor*/
+    Socket::Socket(){
+        hostlen = sizeof(struct sockaddr_storage);
+        socketfd = -1;
+    }
+
+    virtual Socket::~Socket(){
+    }
+
+    /*Return the hostname and port of the host it connect currently*/
+    std::string Socket::getHostname(){
+        struct sockaddr_in addr;
+        socklen_t addr_len;
+        getsockname(socketfd,(struct sockaddr *)&addr,&addr_len);
+        return inet_ntoa(addr.sin_addr);
+    }
+    
+    std::string Socket::getPeername(int fd){
+        struct sockaddr_in addr;
+        socklen_t addr_len;
+        getpeername(fd,(struct sockaddr *)&addr,&addr_len);
+        return inet_ntoa(addr.sin_addr);
+    }
+
+    size_t Socket::getPort(){
+        struct sockaddr_in addr;
+        socklen_t addr_len;
+        getsockname(socketfd,(struct sockaddr *)&addr,&addr_len);
+        return ntohs(addr.sin_port);
+    }
+
+    int Socket::closeConn(int fd){
+        return close(fd);
+    }
+
+    /*****************Class ServerSocket************************/
     ServerSocket::ServerSocket(EventLoop *loop, std::string port):
         loop_(loop),
         port_(port),
@@ -81,4 +118,54 @@ namespace socketx{
     void ServerSocket::handleAccept(){
         int connfd = accept();
     }
+
+    /*****************Class ClientSocket************************/
+    ClientSocket::ClientSocket(EventLoop *loop, std::string hostname, std::string port)
+        :hostname_(hostname),
+         port_(port){
+
+    }
+
+    /*Start to connect to a host. 
+    * This function should retry the connection
+    * until the connection is established or terminated by users.
+    */
+    void ClientSocket::handleConnect(){
+        while(socketfd<0){
+            connect();
+        }
+    }
+
+    int ClientSocket::connect(){
+        struct addrinfo *listp, *p;
+        const char *hostname_ = hostname_.c_str();
+        const char *port_ = port_.c_str();
+
+
+        memset(&hints, 0, sizeof(struct addrinfo));
+        hints.ai_socktype = SOCK_STREAM;
+        hints.ai_flags = AI_NUMERICSERV;
+        hints.ai_flags |= AI_ADDRCONFIG;
+        getaddrinfo(hostname_, port_, &hints, &listp);
+
+        for(p=listp;p;p=p->ai_next){
+            if((socketfd=::socket(p->ai_family,p->ai_socktype,p->ai_protocol))<0)
+                continue;
+            
+            if(connect(socketfd,p->ai_addr,p->ai_addrlen)!=-1)
+                break;
+            close(socketfd);
+        }
+
+        freeaddrinfo(listp);
+        if(!p){
+            printf("connect failed\n");
+            return -1;    
+        }
+        else{
+            printf("connect succeeded\n");
+            return socketfd;
+        }
+    }
+
 }

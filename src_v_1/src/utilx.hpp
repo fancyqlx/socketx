@@ -53,6 +53,34 @@ namespace socketx{
         char rio_buf[RIO_BUFSIZE]; /* Internal buffer */
     } rio_t;
     /* $end rio_t */
+
+    class Message{
+        private:
+            size_t msize;
+            char *data;
+
+        public:
+            Message()=default;
+
+            Message(void * data_, size_t size_){
+                msize = size_;
+                data = (char *)data_;
+            }
+
+            message& operator=(const message &msg){
+                msize = msg.get_size();
+                data = msg.get_data();
+                return *this;
+            }
+
+            size_t get_size() const{
+                return msize;
+            }
+
+            char * get_data() const{
+                return data;
+            }
+    };
 }
 
 #endif

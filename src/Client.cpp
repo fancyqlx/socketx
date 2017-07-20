@@ -22,7 +22,13 @@ namespace socketx{
     void Client::newConnection(int fd){
         currentConn = std::make_shared<Connection>(loop_, fd);
         /* Run user defined function for new connection*/
-        handleConnectionFunc(); 
+        handleConnectionFunc(currentConn); 
+        currentConn->setHandleCloseEvents(std::bind(&Client::removeConnection, this, std::placeholders::_1));
+    }
+
+    void Client::removeConnection(std::shared_ptr<Connection> conn){
+        /*Run user defined function for closing connection*/
+        handleCloseEvents(conn);
     }
 
 }

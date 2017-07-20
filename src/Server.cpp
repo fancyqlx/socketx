@@ -21,7 +21,7 @@ namespace socketx{
             currentConn = conn;
             conn->setHandleCloseEvents(std::bind(&Server::removeConnection, this, std::placeholders::_1));
             /* Run user defined function for new connection*/
-            handleConnectionFunc();
+            handleConnectionFunc(conn);
         }
         else{
             printf("Error: existing file descriptor for a new connection!\n");
@@ -31,7 +31,7 @@ namespace socketx{
     void Server::removeConnection(std::shared_ptr<Connection> conn){
         int fd = conn->getFD();
         auto it = connectionsMap.find(fd);
-        connectionsMap.earse(it);
+        connectionsMap.erase(it);
         /*Run user defined function for closing connection*/
         handleCloseEvents(conn);
     }

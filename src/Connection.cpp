@@ -31,8 +31,8 @@ namespace socketx{
     void Connection::handleError(){
 
     }
-    void Connection::hanldeClose(){
-        event_->deleteEvents();
+    void Connection::handleClose(){
+        event_->deleteEvent();
 
         /*Tell host to delete this connection*/
         handleCloseEvents(shared_from_this());

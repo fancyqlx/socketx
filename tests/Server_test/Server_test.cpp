@@ -14,14 +14,14 @@ class Server_test{
             server_->start();
         }
 
-        void handleConnection(std::shared<Connection> conn){
+        void handleConnection(std::shared_ptr<socketx::Connection> conn){
             printf("New connection comes, we are going to set read events!!!\n");
             server_->setHandleReadEvents(std::bind(&Server_test::handleReadEvents, this,  std::placeholders::_1));
         }
-        void handleReadEvents(std::shared<Connection> conn){
+        void handleReadEvents(std::shared_ptr<socketx::Connection> conn){
             printf("Read events...\n");
         }
-        void handleCloseEvents(std::shared<Connection> conn){
+        void handleCloseEvents(std::shared_ptr<socketx::Connection> conn){
             printf("Close connection...\n");
         }
 

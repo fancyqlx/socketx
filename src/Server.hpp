@@ -22,7 +22,7 @@ namespace socketx{
             /* Provide an API for users 
             *  to handle new connection
             */
-            void setHandleConnectionFunc(const std::function<void()> &func){
+            void setHandleConnectionFunc(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleConnectionFunc = func;
             }
             /* Provide an API for users
@@ -65,7 +65,7 @@ namespace socketx{
             std::map<int, std::shared_ptr<Connection>> connectionsMap;
             std::shared_ptr<Connection> currentConn;
 
-            std::function<void()> handleConnectionFunc;
+            std::function<void(std::shared_ptr<Connection>)> handleConnectionFunc;
             std::function<void(std::shared_ptr<Connection>)> handleReadEvents;
             std::function<void(std::shared_ptr<Connection>)> handleWriteEvents;
             std::function<void(std::shared_ptr<Connection>)> handleCloseEvents;

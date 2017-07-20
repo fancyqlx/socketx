@@ -3,6 +3,7 @@
 
 #include "utilx.hpp"
 
+
 namespace socketx{
 
     /*Forward declaration*/
@@ -23,9 +24,7 @@ namespace socketx{
             void disableWriting();
 
             /*Unregiest events*/
-            void deleteEvents(){
-                loop_->deleteEvents(this);
-            }
+            void deleteEvent();
             
             /*Set callback function*/
             void setReadFunc(const std::function<void()> &func){

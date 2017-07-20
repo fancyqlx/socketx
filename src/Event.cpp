@@ -45,4 +45,8 @@ namespace socketx{
         events_ &= ~(POLLOUT | POLLWRNORM | POLLWRBAND);
         loop_->updateEvent(this);
     }
+
+    void Event::deleteEvent(){
+        loop_->deleteEvent(this);
+    }
 }

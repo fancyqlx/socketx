@@ -17,10 +17,13 @@ namespace socketx{
             */
             void start();
 
+            /* Remove the connection, called by an Connection*/
+            void removeConnection(std::shared_ptr<Connection> conn);
+
             /* Provide an API for users 
             *  to handle new connections
             */
-            void setHandleConnectionFunc(const std::function<void()> &func){
+            void setHandleConnectionFunc(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleConnectionFunc = func;
             }
             /* Provide an API for users
@@ -28,17 +31,20 @@ namespace socketx{
             *  Users need to set these functions in their codes
             *  to regist corresponding events.
             */
-            void setHandleReadEvents(const std::function<void(Connection*)> &func){
+            void setHandleReadEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleReadEvents = func;
                 currentConn->setHandleReadEvents(handleReadEvents);
                 currentConn->registReadEvents();
             }
-            void setHandleWriteEvents(const std::function<void(Connection*)> &func){
+            void setHandleWriteEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleWriteEvents = func;
                 currentConn->setHandleWriteEvents(handleWriteEvents);
                 currentConn->registWriteEvents();
             }
-    
+            void setHandleCloseEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
+                handleCloseEvents = func;
+            }
+
             /* This function need reture the current connection*/
             std::shared_ptr<Connection> getCurrentConnection(){
                 return currentConn;
@@ -58,9 +64,10 @@ namespace socketx{
             ClientSocket * socket_;
             std::shared_ptr<Connection> currentConn;
 
-            std::function<void()> handleConnectionFunc;
-            std::function<void(Connection*)> handleReadEvents;
-            std::function<void(Connection*)> handleWriteEvents;
+            std::function<void(std::shared_ptr<Connection>)> handleConnectionFunc;
+            std::function<void(std::shared_ptr<Connection>)> handleReadEvents;
+            std::function<void(std::shared_ptr<Connection>)> handleWriteEvents;
+             std::function<void(std::shared_ptr<Connection>)> handleCloseEvents;
     };
 
 }

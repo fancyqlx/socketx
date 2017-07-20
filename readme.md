@@ -6,7 +6,7 @@
 
 # socketx
 
-socketx is a library for wrapping linux APIs for socket programming. It is writen by C/C++ and aims to provide C++ interfaces for users. This library is originally used for some simple projects of myself when I was learning networking programming. You can find more details in some of [Examples](##Examples).
+socketx is a library for network programming. It is writen by C/C++ and aims to provide C++ interfaces for users. This library is originally used for some simple projects of myself when I was learning networking programming. You can find more details in some of [Examples](##Examples).
 
 ## Features
 socketx is based on I/O multiplexing and thread pool. It is a simplified reactor. There is one event demultiplexer for dispatching events, then the events are handled by corresponding callback functions. The library was designed for distributed computing projects, so you may find that it is not applied for I/O intensive works.
@@ -26,10 +26,10 @@ In socketx, you just need to do three things:
 - Handle a connection close if you need. Socketx will take care of every connection and destory them in time.
 
 To achive these targets, you need to complete three functions. We expose Connection to let you customize your own program to manage each connection. In this case, you can use the send and write API by connection.
-- NO.1 `void handleConection(std::shared_ptr<Connection> conn)`
-- NO.2 `void handleWriteEvents(std::shared_ptr<Connection> conn)`
-- NO.3 `void handleReadEvents(std::shared_ptr<Connection> conn)`
-- NO.4 `void handleReadEvents(std::shared_ptr<Connection> conn)`
+- NO.1 `void handleConection(std::shared_ptr<socketx::Connection> conn)`
+- NO.2 `void handleWriteEvents(std::shared_ptr<socketx::Connection> conn)`
+- NO.3 `void handleReadEvents(std::shared_ptr<socketx::Connection> conn)`
+- NO.4 `void handleReadEvents(std::shared_ptr<socketx::Connection> conn)`
 
 You can put them all into a class, then the rest of the things will be handled by socketx. To let them work, you should regist them in a `Server` or a `Client`, depends on which class you used. It basically likes (Note that you should first create an EventLoop):
 

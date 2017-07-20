@@ -20,6 +20,9 @@ namespace socketx{
             /* Remove the connection, called by an Connection*/
             void removeConnection(std::shared_ptr<Connection> conn);
 
+            /*Add a connection by yourself if you have a file descriptor*/ 
+            void addConnection(int fd);
+
             /* Provide an API for users 
             *  to handle new connections
             */

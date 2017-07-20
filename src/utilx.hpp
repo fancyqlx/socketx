@@ -42,8 +42,7 @@ namespace socketx{
     #define RIO_BUFSIZE 8192
     #define MAXLINE 8192
     #define LISTENQ 1024
-    #define SERVER 0
-    #define CLIENT 1
+
     const int INFTIM = -1;
 
     typedef struct {
@@ -54,6 +53,7 @@ namespace socketx{
     } rio_t;
     /* $end rio_t */
 
+    /*Message for sending formative datas*/
     class Message{
         private:
             size_t msize;
@@ -81,6 +81,14 @@ namespace socketx{
                 return data;
             }
     };
+
+    class IgnoreSIGPIPE{
+        public:
+            IgnoreSIGPIPE(){
+                ::signal(SIGPIPE,SIG_IGN);
+            }
+    };
+
 }
 
 #endif

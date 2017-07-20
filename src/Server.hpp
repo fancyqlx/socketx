@@ -14,6 +14,8 @@ namespace socketx{
         public:
             Server(EventLoop *loop, std::string port);
 
+            ~Server();
+            
             void start();
 
             /* Remove the connection, called by an Connection*/

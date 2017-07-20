@@ -9,6 +9,12 @@ namespace socketx{
         socket_(new ServerSocket(loop, port)){
             socket_->setNewConnctionFunc(std::bind(&Server::newConnection, this, std::placeholders::_1));
         }
+
+    Server::~Server(){
+        for(auto it=connectionsMap.begin();it!=connectionsMap.end();++it){
+            it->handleClose();
+        }
+    }
  
     void Server::start(){
         socket_->listen();

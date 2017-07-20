@@ -31,6 +31,7 @@ namespace socketx{
     void Connection::handleError(){
 
     }
+
     void Connection::handleClose(){
         event_->deleteEvent();
 
@@ -60,8 +61,10 @@ namespace socketx{
             rio.rio_cnt = read(rio.rio_fd, rio.rio_buf, 
                     sizeof(rio.rio_buf));
             if (rio.rio_cnt < 0) {
-                if (errno != EINTR) /* Interrupted by sig handler return */
-                return -1;
+                if (errno != EINTR){/* Interrupted by sig handler return */
+                    return -1;
+                } 
+                    
             }
             else if (rio.rio_cnt == 0)  /* EOF */
                 return 0;
@@ -141,27 +144,27 @@ namespace socketx{
         return (n - nleft);         /* Return >= 0 */
     }
 
-    ssize_t Connection::readline(void *usrbuf, size_t maxlen){
+    std::string Connection::readline(){
         int n, rc;
-        char c, *bufp = (char *)usrbuf;
+        char c;
+        std::string str="";
 
-        for (n = 1; n <= maxlen; n++) { 
+        for (n = 1;; n++) { 
             if ((rc = rio_read(&c, 1)) == 1) {
-                *bufp++ = c;
+                str += c;
                 if (c == '\n') {
                     n++;
                     break;
                 }
             } else if (rc == 0) {
                 if (n == 1)
-                    return 0; /* EOF, no data read */
+                    return ""; /* EOF, no data read */
                 else
                     break;    /* EOF, some data was read */
             } else
-            return -1;	  /* Error */
+            return "";	  /* Error */
         }
-        *bufp = 0;
-        return n-1;
+        return str;
     }
     
 

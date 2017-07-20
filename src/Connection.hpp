@@ -22,7 +22,6 @@ namespace socketx{
                 event_->enableWriting();
             }
 
-
             /*Handle events*/
             void handleRead();
             void handleWrite();
@@ -52,7 +51,7 @@ namespace socketx{
             * it means recv is connected to fd.
             */
             ssize_t recvFromBuffer(void *usrbuf, size_t n);
-            ssize_t readline(void *usrbuf, size_t n);
+            std::string readline();
             /*Override function of recv.
             * This function needs a fd parameter,
             * It does not use the internal buffer.

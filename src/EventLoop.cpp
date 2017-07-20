@@ -4,7 +4,7 @@ namespace socketx{
 
     EventLoop::EventLoop():
         poller(new Poller()),stop(false){
-            
+            IgnoreSIGPIPE();
         }
 
     EventLoop::~EventLoop(){

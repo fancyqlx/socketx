@@ -6,7 +6,8 @@ class Client_test{
         Client_test(socketx::EventLoop *loop, std::string hostname, std::string port)
         :loop_(loop), hostname_(hostname),port_(port),
         client_(new socketx::Client(loop,hostname,port)){
-            client_->setHandleConnectionFunc(std::bind(&Client_test::handleConnection,this));
+            client_->setHandleConnectionFunc(std::bind(&Client_test::handleConnection, this, std::placeholders::_1));
+            server_->setHandleCloseEvents(std::bind(&Server_test::handleCloseEvents, this, std::placeholders::_1));
         }
 
         void start(){
@@ -15,10 +16,13 @@ class Client_test{
 
         void handleConnection(){
             printf("New connection comes, we are going to set read events!!!\n");
-            client_->setHandleReadEvents(std::bind(&Client_test::handleReadEvents,this));
+            client_->setHandleReadEvents(std::bind(&Client_test::handleReadEvents, this, std::placeholders::_1));
         }
         void handleReadEvents(){
-            printf("Read events....\n");
+            printf("Read events...\n");
+        }
+        void handleCloseEvents(std::shared<Connection> conn){
+            printf("Close connection...\n");
         }
 
     private:

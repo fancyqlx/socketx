@@ -19,16 +19,23 @@ namespace socketx{
         
     }
 
+    /*Handle events*/
     void Connection::handleRead(){
-        handleReadEvents(this);
+        handleReadEvents(shared_from_this());
     }
 
     void Connection::handleWrite(){
-        handleWriteEvents(this);
+        handleWriteEvents(shared_from_this());
     }
  
     void Connection::handleError(){
 
+    }
+    void Connection::hanldeClose(){
+        event_->deleteEvents();
+
+        /*Tell host to delete this connection*/
+        handleCloseEvents(shared_from_this());
     }
 
     /*Connect the file descriptor to rio struct*/

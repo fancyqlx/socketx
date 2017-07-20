@@ -7,7 +7,7 @@ namespace socketx{
         loop_(loop),
         port_(port),
         socket_(new ServerSocket(loop, port)){
-            socket_->setNewConnctionFunc(std::bind(&Server::newConnection,this, std::placeholders::_1));
+            socket_->setNewConnctionFunc(std::bind(&Server::newConnection, this, std::placeholders::_1));
         }
  
     void Server::start(){
@@ -19,12 +19,21 @@ namespace socketx{
         if(!connectionsMap.count(fd)){
             connectionsMap[fd] = conn;
             currentConn = conn;
+            conn->setHandleCloseEvents(std::bind(&Server::removeConnection, this, std::placeholders::_1));
             /* Run user defined function for new connection*/
             handleConnectionFunc();
         }
         else{
             printf("Error: existing file descriptor for a new connection!\n");
         }
+    }
+
+    void Server::removeConnection(std::shared_ptr<Connection> conn){
+        int fd = conn->getFD();
+        auto it = connectionsMap.find(fd);
+        connectionsMap.earse(it);
+        /*Run user defined function for closing connection*/
+        handleCloseEvents(conn);
     }
 
 }

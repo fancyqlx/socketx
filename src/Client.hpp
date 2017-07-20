@@ -18,7 +18,7 @@ namespace socketx{
             void start();
 
             /* Provide an API for users 
-            *  to handle new connection
+            *  to handle new connections
             */
             void setHandleConnectionFunc(const std::function<void()> &func){
                 handleConnectionFunc = func;

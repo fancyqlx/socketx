@@ -6,19 +6,23 @@ class Server_test{
         Server_test(socketx::EventLoop *loop, std::string port)
         :loop_(loop), port_(port),
         server_(new socketx::Server(loop,port)){
-            server_->setHandleConnectionFunc(std::bind(&Server_test::handleConnection,this));
+            server_->setHandleConnectionFunc(std::bind(&Server_test::handleConnection, this, std::placeholders::_1));
+            server_->setHandleCloseEvents(std::bind(&Server_test::handleCloseEvents, this, std::placeholders::_1));
         }
 
         void start(){
             server_->start();
         }
 
-        void handleConnection(){
+        void handleConnection(std::shared<Connection> conn){
             printf("New connection comes, we are going to set read events!!!\n");
-            server_->setHandleReadEvents(std::bind(&Server_test::handleReadEvents,this));
+            server_->setHandleReadEvents(std::bind(&Server_test::handleReadEvents, this,  std::placeholders::_1));
         }
-        void handleReadEvents(){
-            printf("Read events....\n");
+        void handleReadEvents(std::shared<Connection> conn){
+            printf("Read events...\n");
+        }
+        void handleCloseEvents(std::shared<Connection> conn){
+            printf("Close connection...\n");
         }
 
     private:

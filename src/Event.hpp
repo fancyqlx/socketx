@@ -21,6 +21,11 @@ namespace socketx{
             void enableWriting();
             void disableReading();
             void disableWriting();
+
+            /*Unregiest events*/
+            void deleteEvents(){
+                loop_->deleteEvents(this);
+            }
             
             /*Set callback function*/
             void setReadFunc(const std::function<void()> &func){

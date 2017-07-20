@@ -10,6 +10,7 @@ namespace socketx{
     }
 
     Socket::~Socket(){
+        closeConn();
     }
 
     /*Return the hostname and port of the host it connect currently*/
@@ -35,7 +36,7 @@ namespace socketx{
     }
 
     int Socket::closeConn(){
-        return close(socketfd);
+        return ::close(socketfd);
     }
 
     /*****************Class ServerSocket************************/
@@ -51,13 +52,10 @@ namespace socketx{
     }
 
     int ServerSocket::listen(){
-
         /*  Invoke C API for listening a port*/
         struct addrinfo *listp, *p;
         int rc, optval=1;
-
         const char *port = port_.c_str();
-
         /* Get a list of potential server addresses */
         memset(&hints, 0, sizeof(struct addrinfo));
         hints.ai_socktype = SOCK_STREAM;             /* Accept connections */
@@ -67,7 +65,6 @@ namespace socketx{
             fprintf(stderr, "getaddrinfo failed (port %s): %s\n", port, gai_strerror(rc));
             return -2;
         }
-
         /* Walk the list for one that we can bind to */
         for (p = listp; p; p = p->ai_next) {
             /* Create a socket descriptor */
@@ -89,9 +86,7 @@ namespace socketx{
                 return -1;
             }
         }
-
         freeaddrinfo(listp);
-
         if(!p){
             printf("open listen failed");
             return -1;
@@ -148,7 +143,6 @@ namespace socketx{
         struct addrinfo *listp, *p;
         const char *hostname = hostname_.c_str();
         const char *port = port_.c_str();
-
 
         memset(&hints, 0, sizeof(struct addrinfo));
         hints.ai_socktype = SOCK_STREAM;

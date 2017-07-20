@@ -9,7 +9,7 @@ namespace socketx{
 
     /* Forward declaration*/
 
-    class Connection: public Socket{
+    class Connection: public Socket, public std::enable_shared_from_this<Connection>{
         public:
             Connection(EventLoop *loop, int fd);
             ~Connection();
@@ -27,13 +27,17 @@ namespace socketx{
             void handleRead();
             void handleWrite();
             void handleError();
+            void handleClose();
 
             /* Set user defined function*/
-            void setHandleReadEvents(const std::function<void(Connection *)> &func){
+            void setHandleReadEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleReadEvents = func;
             }
-             void setHandleWriteEvents(const std::function<void(Connection *)> &func){
+            void setHandleWriteEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleWriteEvents = func;
+            }
+            void setHandleCloseEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
+                handleCloseEvents = func;
             }
 
             /*Send and write functions*/
@@ -67,8 +71,9 @@ namespace socketx{
             Event *event_;
             EventLoop *loop_;
 
-            std::function<void(Connection *)> handleReadEvents;
-            std::function<void(Connection *)> handleWriteEvents;
+            std::function<void(std::shared_ptr<Connection>)> handleReadEvents;
+            std::function<void(std::shared_ptr<Connection>)> handleWriteEvents;
+            std::function<void(std::shared_ptr<Connection>)> handleCloseEvents;
 
             rio_t rio;
 

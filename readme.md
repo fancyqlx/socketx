@@ -1,7 +1,8 @@
 
 
-`TODO: Refactor the library, the lib is undergoing radical changes...`
-`TODO: We are going to complete the examples of new version of socketx and fix bugs:)`
+**TODO: Refactor the library, the lib is undergoing radical changes...**
+
+**TODO: We are going to complete the examples of new version of socketx and fix bugs :)**
 
 # socketx
 
@@ -10,7 +11,8 @@ socketx is a library for wrapping linux APIs for socket programming. It is write
 ## Features
 socketx is based on I/O multiplexing and thread pool. It is a simplified reactor. There is one event demultiplexer for dispatching events, then the events are handled by corresponding callback functions. The library was designed for distributed computing projects, so you may find that it is not applied for I/O intensive works.
 
-- c++ APIs for socket programming in Linux
+- Automatically dispatch events and handle errors
+- C++ APIs for socket programming in Linux
 - Provide thread pool
 - Thread safe data structures
 - Support robust writing and reading
@@ -21,75 +23,26 @@ In socketx, you just need to do three things:
 - Think about what to do if a new connection comes
 - What do you want to write if a write events occur.
 - Find a container to save datas when a read events occrus and design your own program to handle these datas.
+- Handle a connection close if you need. Socketx will take care of every connection and destory them in time.
 
-To achive these targets, you need to complete three functions.
-- NO.1 `void handleConection()`
-- NO.2 `void handleWriteEvents()`
-- NO.3 `void handleReadEvents()`
+To achive these targets, you need to complete three functions. We expose Connection to let you customize your own program to manage each connection. In this case, you can use the send and write API by connection.
+- NO.1 `void handleConection(std::shared_ptr<Connection> conn)`
+- NO.2 `void handleWriteEvents(std::shared_ptr<Connection> conn)`
+- NO.3 `void handleReadEvents(std::shared_ptr<Connection> conn)`
+- NO.4 `void handleReadEvents(std::shared_ptr<Connection> conn)`
 
-You can put them all into a class, then the rest of the things will be handled by socketx.
+You can put them all into a class, then the rest of the things will be handled by socketx. To let them work, you should regist them in a `Server` or a `Client`, depends on which class you used. It basically likes (Note that you should first create an EventLoop):
 
-## The old version of socketx is here
-We are not going to update old version anymore...
-
-## Examples
-- [echo](./examples/echo/)
-- [multi-echo](./examples/multi-echo/)
-- [Minerx](https://github.com/fancyqlx/Minerx)
-
-## Quickstart
-
-### Create sockets for clients or servers
-The sockets for clients and servers are regarded as object in socketx. It encapsulates connect, bind, listen and accept, all of these processes are transparent for users.
-- Create a client
 ```C++
-socketx::client_socket client
+socketx::EventLoop loop;
+socketx::Server server(&loop, port);
+server.setHandleConnectionFunc(std::bind(handleConnection,std::placeholders::_1));
 ```
-- Connect to a host
+The last step is launching socketx. You need start server then let EventLoop run up.
 ```C++
-client.connect_to(host,port)
-```
-- Create a server
-```C++
-socketx::server_socket server
-```
-- Listen to a port
-```C++
-server.listen_to(port)
-```
-- Accept a connection from port
-```C++
-server.accept_from()
+server.start();
+loop.loop();
 ```
 
-### Communication between hosts
-socketx provides robust writing and reading between hosts. The communication process was managed by an object, which encapsulates all the function used for communication.
-- Create a communication object
-```C++
-socketx::communication comm
-```
-- Create connection with a file descriptor
-```C++
-comm.communication_init(fd)
-```
-- Communication
-```C++
-comm.send(fd,buffer,size)
-comm.recv(buffer,size)
-comm.readline(buffer,size)
-comm.sendmsg(fd,&msg)
-comm.recv()
-```
+## The old version of socketx is [here](https://github.com/fancyqlx/socketx/tree/master/src_old_version)
 
-
-### Thread pool
-Thread pool is an important feature for socketx. In order for the completeness, socketx also provides some thread safe structures. 
-- Create a thread pool
-```C++
-socketx::thread_pool pool;
-socketx::thread_pool pool(4);
-```
-- Submit a task
-```C++
-pool.submit(std::bind(task,args));
-```

@@ -11,7 +11,7 @@ namespace socketx{
 
     class Event{
         public:
-            Event(EventLoop *loop);
+            Event(EventLoop *loop, int fd);
             ~Event();
 
             /*Handle the event according to revents*/

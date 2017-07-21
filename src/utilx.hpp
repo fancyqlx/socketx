@@ -14,6 +14,8 @@
 #include <sys/time.h>
 #include <poll.h>
 #include <sys/stropts.h>
+#include <sys/timerfd.h>
+#include <time.h>
 
 #include <string>
 #include <cstring>

@@ -1,5 +1,6 @@
 
-DIR_TEST = ./EventLoop_test ./Client_test ./Server_test
+DIR_TEST = ./EventLoop_test ./Client_test ./Server_test \
+			./Timer_test
 
 tests: 
 	for dir in $(DIR_TEST); do\

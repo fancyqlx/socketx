@@ -1,4 +1,4 @@
-#include "threadx.hpp"
+#include "Threadx.hpp"
 
 namespace socketx{
     /********** Semaphore ************/
@@ -19,7 +19,7 @@ namespace socketx{
     }
     
     /********* Thread pool ************/
-    void thread_pool::worker(){
+    void ThreadPool::worker(){
         while(!done){
             std::function<void()> task;
             if(tasks.try_pop(task))
@@ -29,13 +29,13 @@ namespace socketx{
         }
     }
     
-    thread_pool::thread_pool(size_t num):thread_num(num),done(false){
+    ThreadPool::ThreadPool(size_t num):thread_num(num),done(false){
         for(size_t i=0;i<num;++i){
-            workers.push_back(std::thread(&thread_pool::worker,this));
+            workers.push_back(std::thread(&ThreadPool::worker,this));
         }
     }
 
-    thread_pool::~thread_pool(){
+    ThreadPool::~ThreadPool(){
         done = true;
         for(std::thread &x:workers)
             x.join();

@@ -11,8 +11,8 @@ class Client_test{
             client_->setHandleCloseEvents(std::bind(&Client_test::handleCloseEvents, this, std::placeholders::_1));
             /*Get file descriptor of stdin and regist it into EventLoop*/
             int fd = fileno(stdin);
-            stdinConn = std::make_shared<Connection>(loop_,fd);
-            stdinConn->setHandleReadEvents(std::bind(&Client_test::stdinReadEvents, this, std::placeholders::_1))
+            stdinConn = std::make_shared<socketx::Connection>(loop_,fd);
+            stdinConn->setHandleReadEvents(std::bind(&Client_test::stdinReadEvents, this, std::placeholders::_1));
             stdinConn->registReadEvents();
         }
 
@@ -26,9 +26,9 @@ class Client_test{
                 line += '\n';
                 clientConn->send(line.c_str(),line.size());
             }
-            else(
+            else
                 printf("Read error from stdin....\n");
-            )
+            
         }
 
         void handleConnection(std::shared_ptr<socketx::Connection> conn){
@@ -38,16 +38,16 @@ class Client_test{
         }
         void handleReadEvents(std::shared_ptr<socketx::Connection> conn){
             std::string line = conn->readline();
-            if(line.size()==0) conn_->handleClose();
-            else std::cout<<line<<endl;
+            if(line.size()==0) conn->handleClose();
+            else std::cout<<line<<std::endl;
         }
         void handleCloseEvents(std::shared_ptr<socketx::Connection> conn){
             printf("Close connection...\n");
         }
 
     private:
-        std::shared_ptr<Connection> stdinConn;
-        std::shared_ptr<Connection> clientConn;
+        std::shared_ptr<socketx::Connection> stdinConn;
+        std::shared_ptr<socketx::Connection> clientConn;
         socketx::EventLoop *loop_;
         socketx::Client *client_;
         std::string hostname_;

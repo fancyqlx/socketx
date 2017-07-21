@@ -12,7 +12,7 @@ namespace socketx{
 
     Server::~Server(){
         for(auto it=connectionsMap.begin();it!=connectionsMap.end();++it){
-            it->handleClose();
+            it->second->handleClose();
         }
     }
  
@@ -21,7 +21,7 @@ namespace socketx{
     }
 
     void Server::newConnection(int fd){
-        std::shared_ptr<Connection> currentConn = std::make_shared<Connection>(loop_, fd);
+        currentConn = std::make_shared<Connection>(loop_, fd);
         if(!connectionsMap.count(fd)){
             connectionsMap[fd] = currentConn;
             currentConn->setHandleCloseEvents(std::bind(&Server::removeConnection, this, std::placeholders::_1));

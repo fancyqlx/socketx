@@ -156,12 +156,13 @@ namespace socketx{
             
             if(::connect(socketfd,p->ai_addr,p->ai_addrlen)!=-1)
                 break;
-            close(socketfd);
+            ::close(socketfd);
         }
 
         freeaddrinfo(listp);
         if(!p){
             printf("connect failed\n");
+            ::close(socketfd);
             return -1;    
         }
         else{

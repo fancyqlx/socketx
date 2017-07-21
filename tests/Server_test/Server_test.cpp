@@ -10,6 +10,10 @@ class Server_test{
             server_->setHandleCloseEvents(std::bind(&Server_test::handleCloseEvents, this, std::placeholders::_1));
         }
 
+        ~Server_test(){
+            delete server_;
+        }
+
         void start(){
             server_->start();
         }

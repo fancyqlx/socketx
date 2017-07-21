@@ -14,6 +14,7 @@ namespace socketx{
         for(auto it=connectionsMap.begin();it!=connectionsMap.end();++it){
             it->second->handleClose();
         }
+        delete socket_;
     }
  
     void Server::start(){

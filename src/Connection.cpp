@@ -16,7 +16,7 @@ namespace socketx{
     }
 
     Connection::~Connection(){
-        
+        delete event_;
     }
 
     /*Handle events*/

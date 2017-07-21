@@ -8,7 +8,7 @@ namespace socketx{
         }
 
     EventLoop::~EventLoop(){
-
+        delete poller;
     }
 
     /* Main Loop

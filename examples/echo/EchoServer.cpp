@@ -1,13 +1,17 @@
 #include "EventLoop.hpp"
 #include "Server.hpp"
 
-class Server_test{
+class EchoServer{
     public:
-        Server_test(socketx::EventLoop *loop, std::string port)
+        EchoServer(socketx::EventLoop *loop, std::string port)
         :loop_(loop), port_(port),
         server_(new socketx::Server(loop,port)){
-            server_->setHandleConnectionFunc(std::bind(&Server_test::handleConnection, this, std::placeholders::_1));
-            server_->setHandleCloseEvents(std::bind(&Server_test::handleCloseEvents, this, std::placeholders::_1));
+            server_->setHandleConnectionFunc(std::bind(&EchoServer::handleConnection, this, std::placeholders::_1));
+            server_->setHandleCloseEvents(std::bind(&EchoServer::handleCloseEvents, this, std::placeholders::_1));
+        }
+
+        ~EchoServer(){
+            delete server_;
         }
 
         void start(){
@@ -16,7 +20,7 @@ class Server_test{
 
         void handleConnection(std::shared_ptr<socketx::Connection> conn){
             printf("New connection comes, we are going to set read events!!!\n");
-            server_->setHandleReadEvents(std::bind(&Server_test::handleReadEvents, this,  std::placeholders::_1));
+            server_->setHandleReadEvents(std::bind(&EchoServer::handleReadEvents, this,  std::placeholders::_1));
         }
         void handleReadEvents(std::shared_ptr<socketx::Connection> conn){
             std::string line = conn->readline();
@@ -46,7 +50,7 @@ int main(int argc, char **argv){
 
     std::string port(argv[1]);
     socketx::EventLoop loop;
-    Server_test server(&loop,port);
+    EchoServer server(&loop,port);
     server.start(); 
     loop.loop();
 

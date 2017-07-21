@@ -2,18 +2,22 @@
 #include "Client.hpp"
 #include "Connection.hpp"
 
-class Client_test{
+class EchoClient{
     public:
-        Client_test(socketx::EventLoop *loop, std::string hostname, std::string port)
+        EchoClient(socketx::EventLoop *loop, std::string hostname, std::string port)
         :loop_(loop), hostname_(hostname),port_(port),
         client_(new socketx::Client(loop,hostname,port)){
-            client_->setHandleConnectionFunc(std::bind(&Client_test::handleConnection, this, std::placeholders::_1));
-            client_->setHandleCloseEvents(std::bind(&Client_test::handleCloseEvents, this, std::placeholders::_1));
+            client_->setHandleConnectionFunc(std::bind(&EchoClient::handleConnection, this, std::placeholders::_1));
+            client_->setHandleCloseEvents(std::bind(&EchoClient::handleCloseEvents, this, std::placeholders::_1));
             /*Get file descriptor of stdin and regist it into EventLoop*/
             int fd = fileno(stdin);
             stdinConn = std::make_shared<socketx::Connection>(loop_,fd);
-            stdinConn->setHandleReadEvents(std::bind(&Client_test::stdinReadEvents, this, std::placeholders::_1));
+            stdinConn->setHandleReadEvents(std::bind(&EchoClient::stdinReadEvents, this, std::placeholders::_1));
             stdinConn->registReadEvents();
+        }
+
+        ~EchoClient(){
+            delete client_;
         }
 
         void start(){
@@ -33,7 +37,7 @@ class Client_test{
 
         void handleConnection(std::shared_ptr<socketx::Connection> conn){
             printf("New connection comes, we are going to set read events!!!\n");
-            client_->setHandleReadEvents(std::bind(&Client_test::handleReadEvents, this, std::placeholders::_1));
+            client_->setHandleReadEvents(std::bind(&EchoClient::handleReadEvents, this, std::placeholders::_1));
             clientConn = conn;
         }
         void handleReadEvents(std::shared_ptr<socketx::Connection> conn){
@@ -63,7 +67,7 @@ int main(int argc, char **argv){
     std::string hostname(argv[1]);
     std::string port(argv[2]);
     socketx::EventLoop loop;
-    Client_test client(&loop,hostname,port);
+    EchoClient client(&loop,hostname,port);
     client.start();
     loop.loop();
 

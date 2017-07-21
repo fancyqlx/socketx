@@ -11,6 +11,8 @@ namespace socketx{
         public:
             Client(EventLoop *loop, std::string hostname, std::string port);
             
+            ~Client();
+
             /*Start to connect to a host. 
             * This function should retry the connection
             * until the connection is established or terminated by users.

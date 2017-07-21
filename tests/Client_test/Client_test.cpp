@@ -11,6 +11,10 @@ class Client_test{
             client_->setHandleCloseEvents(std::bind(&Client_test::handleCloseEvents, this, std::placeholders::_1));
         }
 
+        ~Client_test(){
+            delete client;
+        }
+
         void start(){
             client_->start();
         }

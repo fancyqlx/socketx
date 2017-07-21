@@ -10,6 +10,10 @@ namespace socketx{
 
     }
 
+    Client::~Client(){
+        delete socket_;
+    }
+
      /*Start to connect to a host. 
     * This function should retry the connection
     * until the connection is established or terminated by users.

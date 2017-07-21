@@ -33,6 +33,7 @@ namespace socketx{
         event_->setFD(fd_);
         event_->enableReading();
         event_->setReadFunc(std::bind(&Timer::handleTimer,this));
+        handleTimerFunc = func;
     }
 
     void Timer::clear(){

@@ -9,10 +9,18 @@ class Client_test{
         client_(new socketx::Client(loop,hostname,port)){
             client_->setHandleConnectionFunc(std::bind(&Client_test::handleConnection, this, std::placeholders::_1));
             client_->setHandleCloseEvents(std::bind(&Client_test::handleCloseEvents, this, std::placeholders::_1));
+            /*Get file descriptor of stdin and regist it into EventLoop*/
+            int fd = fileno(stdin);
+            stdinConn = std::make_shared<Connection>(loop_,fd);
+            stdinConn->setHandleReadEvents(std::bind(&Client_test::stdinReadEvents, this, std::placeholders::_1))
         }
 
         void start(){
             client_->start();
+        }
+
+        void stdinReadEvents(std::shared_ptr<socketx::Connection> conn){
+            printf("Stdin Read events...\n");
         }
 
         void handleConnection(std::shared_ptr<socketx::Connection> conn){
@@ -27,6 +35,7 @@ class Client_test{
         }
 
     private:
+        std::shared_ptr<Connection> stdinConn;
         socketx::EventLoop *loop_;
         socketx::Client *client_;
         std::string hostname_;

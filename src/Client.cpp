@@ -21,9 +21,15 @@ namespace socketx{
 
     void Client::newConnection(int fd){
         currentConn = std::make_shared<Connection>(loop_, fd);
-        /* Run user defined function for new connection*/
-        handleConnectionFunc(currentConn); 
-        currentConn->setHandleCloseEvents(std::bind(&Client::removeConnection, this, std::placeholders::_1));
+        if(!connectionsMap.count(fd)){
+            connectionsMap[fd] = currentConn;
+            currentConn->setHandleCloseEvents(std::bind(&Client::removeConnection, this, std::placeholders::_1));
+            /* Run user defined function for new connection*/
+            handleConnectionFunc(currentConn);
+        }
+        else{
+            printf("Error: existing file descriptor for a new connection!\n");
+        }
     }
 
     void Client::removeConnection(std::shared_ptr<Connection> conn){

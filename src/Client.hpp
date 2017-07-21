@@ -20,8 +20,6 @@ namespace socketx{
             /* Remove the connection, called by an Connection*/
             void removeConnection(std::shared_ptr<Connection> conn);
 
-            /*Add a connection by yourself if you have a file descriptor*/ 
-            void addConnection(int fd);
 
             /* Provide an API for users 
             *  to handle new connections
@@ -29,6 +27,7 @@ namespace socketx{
             void setHandleConnectionFunc(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleConnectionFunc = func;
             }
+
             /* Provide an API for users
             *  to handle events of a connection.
             *  Users need to set these functions in their codes
@@ -66,11 +65,12 @@ namespace socketx{
             std::string port_;
             ClientSocket * socket_;
             std::shared_ptr<Connection> currentConn;
-
+            std::map<int, std::shared_ptr<Connection>> connectionsMap;
+            
             std::function<void(std::shared_ptr<Connection>)> handleConnectionFunc;
             std::function<void(std::shared_ptr<Connection>)> handleReadEvents;
             std::function<void(std::shared_ptr<Connection>)> handleWriteEvents;
-             std::function<void(std::shared_ptr<Connection>)> handleCloseEvents;
+            std::function<void(std::shared_ptr<Connection>)> handleCloseEvents;
     };
 
 }

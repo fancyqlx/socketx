@@ -9,7 +9,6 @@ tests:
 .PHONY: clean
 
 clean:
-	rm -f $(SRC_OBJ)
 	for dir in $(DIR_TEST); do\
 		(cd $$dir; ${MAKE} clean);\
 	done

@@ -36,5 +36,4 @@ namespace socketx{
         /*Run user defined function for closing connection*/
         handleCloseEvents(conn);
     }
-
 }

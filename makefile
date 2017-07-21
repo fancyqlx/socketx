@@ -1,5 +1,6 @@
 DIR_SRC = ./src
 DIR_TEST = ./tests
+DIR_EXP = ./examples
 
 SRC = $(wildcard ${DIR_SRC}/*.cpp)
 
@@ -13,7 +14,12 @@ Lib: $(SRC_OBJ)
 ${DIR_SRC}/%.o:$(DIR_SRC)/%.cpp
 	g++ $(CFLAGS) -c $< -o $@
 
-.PHONY: tests clean
+.PHONY: examples tests clean
+
+examples: 
+	for dir in $(DIR_EXP); do\
+		(cd $$dir; ${MAKE});\
+	done
 
 tests: 
 	for dir in $(DIR_TEST); do\
@@ -22,6 +28,9 @@ tests:
 
 clean:
 	rm -f $(SRC_OBJ)
+	for dir in $(DIR_EXP); do\
+		(cd $$dir; ${MAKE} clean);\
+	done
 	for dir in $(DIR_TEST); do\
 		(cd $$dir; ${MAKE} clean);\
 	done

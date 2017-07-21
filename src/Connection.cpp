@@ -5,7 +5,8 @@ namespace socketx{
     Connection::Connection(EventLoop *loop, int fd):
         loop_(loop),
         Socket(fd),
-        event_(new Event(loop)){
+        event_(new Event(loop)),
+        readFun(false),writeFun(false),closeFun(false){
         /*Set callback functions*/
         event_->setReadFunc(std::bind(&Connection::handleRead, this));
         event_->setWriteFunc(std::bind(&Connection::handleWrite, this));
@@ -21,11 +22,17 @@ namespace socketx{
 
     /*Handle events*/
     void Connection::handleRead(){
-        handleReadEvents(shared_from_this());
+        if(readFun)
+            handleReadEvents(shared_from_this());
+        else
+            printf("No function for read events...\n");
     }
 
     void Connection::handleWrite(){
-        handleWriteEvents(shared_from_this());
+        if(writeFun)
+            handleWriteEvents(shared_from_this());
+        else
+            printf("No function for write events...\n");
     }
  
     void Connection::handleError(){
@@ -36,7 +43,10 @@ namespace socketx{
         event_->deleteEvent();
 
         /*Tell host to delete this connection*/
-        handleCloseEvents(shared_from_this());
+        if(closeFun)
+            handleCloseEvents(shared_from_this());
+        else
+            printf("No function for close events...\n");
     }
 
     /*Connect the file descriptor to rio struct*/

@@ -19,12 +19,14 @@ class Server_test{
             server_->setHandleReadEvents(std::bind(&Server_test::handleReadEvents, this,  std::placeholders::_1));
         }
         void handleReadEvents(std::shared_ptr<socketx::Connection> conn){
-            std::string res = conn->readline();
-            if(res.size()==0){
+            std::string line = conn->readline();
+            
+            if(line.size()==0){
                 conn->handleClose();
                 return;
-            }
-            conn->send(res.c_str(),res.size()+1);
+            }else
+                std::cout<<line<<endl;
+            conn->send(line.c_str(),line.size());
         }
         void handleCloseEvents(std::shared_ptr<socketx::Connection> conn){
             printf("Close connection...\n");

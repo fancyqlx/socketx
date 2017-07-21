@@ -31,12 +31,15 @@ namespace socketx{
             /* Set user defined function*/
             void setHandleReadEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleReadEvents = func;
+                readFun = true;
             }
             void setHandleWriteEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleWriteEvents = func;
+                writeFun = true;
             }
             void setHandleCloseEvents(const std::function<void(std::shared_ptr<Connection>)> &func){
                 handleCloseEvents = func;
+                closeFun = true;
             }
 
             /*Send and write functions*/
@@ -70,6 +73,9 @@ namespace socketx{
             Event *event_;
             EventLoop *loop_;
 
+            bool readFun;
+            bool writeFun;
+            bool closeFun;
             std::function<void(std::shared_ptr<Connection>)> handleReadEvents;
             std::function<void(std::shared_ptr<Connection>)> handleWriteEvents;
             std::function<void(std::shared_ptr<Connection>)> handleCloseEvents;

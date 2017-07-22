@@ -52,11 +52,11 @@ loop.loop();
 ## Module
 socketx has six modules for your programming. They are `socketx::EventLoop`, `socketx::Timer`, `socketx::Connection`, `socketx::Server`, `socketx::Client` and `socketx::ThreadPool`. For most of programs, `socketx::EventLoop`, `socketx::Connection`, `socketx::Server` and `socketx::Client` are required. For a simper program, `socketx::EventLoop` and `socketx::Connection` are enough. 
 
-`socketx::EventLoop` is the core of socketx. It utilizes `poll` to dispatch events, then invokes callback functions you registed. To regiest an event, you need `socketx::Connection` or `socketx::Timer`. `socketx::Connection` will manage a file descriptor and all events you interested. If a certain event occurs, you can handle this event by `socketx::Connection`, which encapsulates several sending and reading functions.
+ **`socketx::EventLoop`** is the core of socketx. It utilizes `poll` to dispatch events, then invokes callback functions you registed. To regiest an event, you need `socketx::Connection` or `socketx::Timer`. `socketx::Connection` will manage a file descriptor and all events you interested. If a certain event occurs, you can handle this event by `socketx::Connection`, which encapsulates several sending and reading functions.
 
-`socketx::Timer` is a much simpler module. It does not provide any functions for handle events it a timer is expiration. It just notifies you that it is the time, so you have to think about what you need to do if it occurs. A simple example for `socketx::Timer` is [multi-echo/EchoClient.cpp](./examples/multi-echo/EchoClient.cpp).
+**`socketx::Timer`** is a much simpler module. It does not provide any functions for handle events it a timer is expiration. It just notifies you that it is the time, so you have to think about what you need to do if it occurs. A simple example for `socketx::Timer` is [multi-echo/EchoClient.cpp](./examples/multi-echo/EchoClient.cpp).
 
-`socketx::Server` and `socketx::Client` are modules for creating server and client respectively. They encapsulate `bind`, `listen`, `accepte`, `connect` and so on. If you utilize these modules, you need provide hostname and port for them, then regist functions for events of new connections and read events. Like this:
+**`socketx::Server`** and **`socketx::Client`** are modules for creating server and client respectively. They encapsulate `bind`, `listen`, `accepte`, `connect` and so on. If you utilize these modules, you need provide hostname and port for them, then regist functions for events of new connections and read events. Like this:
 ```C++
 server_->setHandleConnectionFunc(const std::function<void(std::shared_ptr<Connection>)> &func);
 server_->setHandleReadEvents(const std::function<void(std::shared_ptr<Connection>)> &func);

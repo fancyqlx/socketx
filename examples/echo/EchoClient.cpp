@@ -61,7 +61,7 @@ class EchoClient{
 
 int main(int argc, char **argv){
     if(argc!=3){
-        fprintf(stderr,"usage: %s <port>\n", argv[0]);
+        fprintf(stderr,"usage: %s <host> <port>\n", argv[0]);
         exit(0);
     }
     std::string hostname(argv[1]);

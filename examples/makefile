@@ -1,5 +1,5 @@
 
-DIR_EXP = ./echo 
+DIR_EXP = ./echo ./multi-echo
 
 examples: 
 	for dir in $(DIR_EXP); do\

@@ -7,15 +7,15 @@ CFLAGS += -I$(DIR_SRC) -std=c++11 -pthread
 
 SRC_OBJ = $(patsubst %.cpp, %.o, ${SRC})
 
-OBJ = echo_client.o echo_server.o 
+OBJ = EchoClient.o EchoServer.o 
 
-multi-echo: echo_client echo_server
+multi-echo: EchoClient EchoServer
 	
-echo_client: echo_client.o ${SRC_OBJ}
-	g++ $(CFLAGS) echo_client.o ${SRC_OBJ} -o echo_client
+EchoClient: EchoClient.o ${SRC_OBJ}
+	g++ $(CFLAGS) EchoClient.o ${SRC_OBJ} -o EchoClient
 
-echo_server: echo_server.o ${SRC_OBJ}
-	g++ $(CFLAGS) echo_server.o ${SRC_OBJ} -o echo_server
+EchoServer: EchoServer.o ${SRC_OBJ}
+	g++ $(CFLAGS) EchoServer.o ${SRC_OBJ} -o EchoServer
 
 ./%.o:./%.cpp
 	g++ $(CFLAGS) -c $< -o $@
@@ -24,4 +24,4 @@ ${DIR_SRC}/%.o:$(DIR_SRC)/%.cpp
 	g++ $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(SRC_OBJ) ./*.o echo_client echo_server
+	rm -f $(SRC_OBJ) ./*.o EchoClient EchoServer

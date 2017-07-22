@@ -12,7 +12,7 @@ class Client_test{
         }
 
         ~Client_test(){
-            delete client;
+            delete client_;
         }
 
         void start(){

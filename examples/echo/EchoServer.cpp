@@ -5,13 +5,9 @@ class EchoServer{
     public:
         EchoServer(socketx::EventLoop *loop, std::string port)
         :loop_(loop), port_(port),
-        server_(new socketx::Server(loop,port)){
+        server_(std::make_shared<socketx::Server>(loop,port)){
             server_->setHandleConnectionFunc(std::bind(&EchoServer::handleConnection, this, std::placeholders::_1));
             server_->setHandleCloseEvents(std::bind(&EchoServer::handleCloseEvents, this, std::placeholders::_1));
-        }
-
-        ~EchoServer(){
-            delete server_;
         }
 
         void start(){
@@ -37,7 +33,7 @@ class EchoServer{
 
     private:
         socketx::EventLoop *loop_;
-        socketx::Server *server_;
+        std::shared_ptr<socketx::Server> server_;
         std::string port_;
 };
 

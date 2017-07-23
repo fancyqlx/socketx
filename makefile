@@ -9,12 +9,17 @@ CFLAGS += -I$(DIR_SRC) -std=c++11 -pthread
 
 SRC_OBJ = $(patsubst %.cpp, %.o, ${SRC})
 
-Lib: $(SRC_OBJ)
+OBJ: $(SRC_OBJ)
 
 ${DIR_SRC}/%.o:$(DIR_SRC)/%.cpp
 	g++ $(CFLAGS) -c $< -o $@
 
-.PHONY: examples tests clean
+.PHONY: examples tests clean Lib 
+
+lib: ./libs/libsocketx.a
+
+./libs/libsocketx.a: $(SRC_OBJ)
+	ar rcs $@ $^
 
 examples: 
 	for dir in $(DIR_EXP); do\

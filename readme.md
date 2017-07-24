@@ -21,6 +21,7 @@ socketx is based on I/O multiplexing and thread pool. It is a simplified reactor
 - [echo](./examples/echo/)
 - [multi-echo](./examples/multi-echo/)
 - [Minerx](https://github.com/fancyqlx/Minerx)
+- [TinyHttpx](https://github.com/fancyqlx/TinyHttpx)
 
 ## New socketx is coming!
 ## QuickStart

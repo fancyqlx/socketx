@@ -20,8 +20,8 @@ socketx is based on I/O multiplexing and thread pool. It is a simplified reactor
 ## Examples
 - [echo](./examples/echo/)
 - [multi-echo](./examples/multi-echo/)
-- [Minerx](https://github.com/fancyqlx/Minerx)
-- [TinyHttpx](https://github.com/fancyqlx/TinyHttpx)
+- [Minerx (A distributed bitcoin miner)](https://github.com/fancyqlx/Minerx)
+- [TinyHttpx (A simple http server)](https://github.com/fancyqlx/TinyHttpx)
 
 ## New socketx is coming!
 ## QuickStart
@@ -50,7 +50,7 @@ server.start();
 loop.loop();
 ```
 
-## Module
+## Modules
 socketx has six modules for your programming. They are `socketx::EventLoop`, `socketx::Timer`, `socketx::Connection`, `socketx::Server`, `socketx::Client` and `socketx::ThreadPool`. For most of programs, `socketx::EventLoop`, `socketx::Connection`, `socketx::Server` and `socketx::Client` are required. For a simper program, `socketx::EventLoop` and `socketx::Connection` are enough. 
 
  **`socketx::EventLoop`** is the core of socketx. It utilizes `poll` to dispatch events, then invokes callback functions you registed. To regiest an event, you need `socketx::Connection` or `socketx::Timer`. `socketx::Connection` will manage a file descriptor and all events you interested. If a certain event occurs, you can handle this event by `socketx::Connection`, which encapsulates several sending and reading functions.
@@ -63,6 +63,8 @@ server_->setHandleConnectionFunc(const std::function<void(std::shared_ptr<Connec
 server_->setHandleReadEvents(const std::function<void(std::shared_ptr<Connection>)> &func);
 ```
 If you want to handle something if the connection is closed, then regist a handleCloseEvents for it.
+
+**`socketx::ThreadPool`** is an alternative module for programming. It would be very useful if you want handle several connections concurrently. [TinyHttpx](https://github.com/fancyqlx/TinyHttpx) is a good example for this purpose.
 
 ## The old version of socketx is [here](https://github.com/fancyqlx/socketx/tree/master/src_old_version)
 

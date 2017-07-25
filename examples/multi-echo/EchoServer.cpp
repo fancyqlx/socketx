@@ -22,7 +22,7 @@ class Server_test{
     public:
         Server_test(socketx::EventLoop *loop, std::string port)
         :loop_(loop), port_(port),
-        server_(new socketx::Server(loop,port)){
+        server_(std::make_shared<socketx::Server>(loop,port)){
             server_->setHandleConnectionFunc(std::bind(&Server_test::handleConnection, this, std::placeholders::_1));
             server_->setHandleCloseEvents(std::bind(&Server_test::handleCloseEvents, this, std::placeholders::_1));
         }
@@ -57,7 +57,7 @@ class Server_test{
 
     private:
         socketx::EventLoop *loop_;
-        socketx::Server *server_;
+        std::shared_ptr<socketx::Server> server_;
         std::string port_;
 };
 

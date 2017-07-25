@@ -6,7 +6,7 @@ class EchoClient{
     public:
         EchoClient(socketx::EventLoop *loop, std::string hostname, std::string port)
         :loop_(loop), hostname_(hostname),port_(port),
-        client_(new socketx::Client(loop,hostname,port)){
+        client_(std::make_shared<socketx::Client>(loop,hostname,port)){
             client_->setHandleConnectionFunc(std::bind(&EchoClient::handleConnection, this, std::placeholders::_1));
             client_->setHandleCloseEvents(std::bind(&EchoClient::handleCloseEvents, this, std::placeholders::_1));
             /*Get file descriptor of stdin and regist it into EventLoop*/
@@ -14,10 +14,6 @@ class EchoClient{
             stdinConn = std::make_shared<socketx::Connection>(loop_,fd);
             stdinConn->setHandleReadEvents(std::bind(&EchoClient::stdinReadEvents, this, std::placeholders::_1));
             stdinConn->registReadEvents();
-        }
-
-        ~EchoClient(){
-            delete client_;
         }
 
         void start(){
@@ -53,7 +49,7 @@ class EchoClient{
         std::shared_ptr<socketx::Connection> stdinConn;
         std::shared_ptr<socketx::Connection> clientConn;
         socketx::EventLoop *loop_;
-        socketx::Client *client_;
+        std::shared_ptr<socketx::Client> client_;
         std::string hostname_;
         std::string port_;
 };

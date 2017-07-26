@@ -179,8 +179,8 @@ namespace socketx{
 
     /*Send and receive messages*/
     ssize_t Connection::sendmsg(const Message &msg){
-        size_t n = msg.get_size();
-        char * buffer = msg.get_data();
+        size_t n = msg.getSize();
+        char * buffer = msg.getData();
         /*Send the size of the message first*/
         if(send(&n,sizeof(n))>0){
             /*Send data*/

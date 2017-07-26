@@ -70,16 +70,16 @@ namespace socketx{
             }
 
             Message& operator=(const Message &msg){
-                msize = msg.get_size();
-                data = msg.get_data();
+                msize = msg.getSize();
+                data = msg.getData();
                 return *this;
             }
 
-            size_t get_size() const{
+            size_t getSize() const{
                 return msize;
             }
 
-            char * get_data() const{
+            char * getData() const{
                 return data;
             }
     };

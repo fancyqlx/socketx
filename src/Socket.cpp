@@ -134,9 +134,8 @@ namespace socketx{
     * until the connection is established or terminated by users.
     */
     void ClientSocket::handleConnect(){
-        while(socketfd<0){
-            connect();
-        }
+            socketfd = connect();
+            if(socketfd<0) exit(0);
     }
 
     int ClientSocket::connect(){

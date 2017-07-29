@@ -1,5 +1,5 @@
 ## Examples
-There are few simple examples in this subdirectory. For some complicated examples, we put them in independent directory. You can find them by following links.
+There are few simple examples in this subdirectory. For some complicated examples, we put them in independent directories. You can find them by following links.
 
 - [echo](./examples/echo/)
 - [multi-echo](./examples/multi-echo/)

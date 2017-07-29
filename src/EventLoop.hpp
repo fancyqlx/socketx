@@ -18,6 +18,9 @@ namespace socketx{
             *  The Loop will stop when stop falg is set to false
             */
             void loop();
+            void quit(){
+                stop = true;
+            }
 
             /*Update events by invoke poller's function*/
             void updateEvent(Event *event);

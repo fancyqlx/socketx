@@ -43,6 +43,7 @@ class EchoClient{
         }
         void handleCloseEvents(std::shared_ptr<socketx::Connection> conn){
             printf("Close connection...\n");
+            loop_->quit();
         }
 
     private:

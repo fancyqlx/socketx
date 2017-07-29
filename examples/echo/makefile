@@ -3,7 +3,7 @@ DIR_SRC = ../../src
 SRC = $(wildcard ${DIR_SRC}/*.cpp)
 
 VPATH = $(DIR_SRC)
-CFLAGS += -I$(DIR_SRC) -std=c++11 -pthread
+CFLAGS += -I$(DIR_SRC) -std=c++11 -pthread -g
 
 SRC_OBJ = $(patsubst %.cpp, %.o, ${SRC})
 

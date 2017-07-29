@@ -6,7 +6,7 @@
 
 # socketx
 
-socketx is a library for network programming. It is writen by C/C++ and aims to provide C++ interfaces for users. This library is originally used for some simple projects of myself when I was learning networking programming. You can find more details in some of [Examples](##Examples).
+socketx is a library for network programming. It is writen by C/C++ and aims to provide C++ interfaces for users. This library is originally used for some simple projects of myself when I was learning networking programming. You can find more details in some of [Examples](./examples).
 
 ## Features
 socketx is based on I/O multiplexing and thread pool. It is a simplified reactor. There is one event demultiplexer for dispatching events, then the events are handled by corresponding callback functions. The library was designed for distributed computing projects, some features are designed for this purpose.
@@ -22,6 +22,7 @@ socketx is based on I/O multiplexing and thread pool. It is a simplified reactor
 - [multi-echo](./examples/multi-echo/)
 - [Minerx (A distributed bitcoin miner)](https://github.com/fancyqlx/Minerx)
 - [TinyHttpx (A simple http server)](https://github.com/fancyqlx/TinyHttpx)
+- [DAWTA](https://github.com/fancyqlx/DAWTA)
 
 ## New socketx is coming!
 ## QuickStart

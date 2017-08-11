@@ -16,6 +16,7 @@ socketx is based on I/O multiplexing and thread pool. It is a simplified reactor
 - Provide thread pool
 - Thread safe data structures
 - Support robust writing and reading
+- Provide a simple Message Queue
 
 ## Examples
 - [echo](./examples/echo/)

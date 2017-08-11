@@ -42,7 +42,7 @@ namespace socketx{
             /*Update eventsMap*/
             eventsMap[eventfd] = event;
             /*Update eventsList*/
-            eventsList.push_back(event);
+            //eventsList.push_back(event);
             /*Update pollfdList*/
             struct pollfd pollfd_;
             pollfd_.fd = eventfd;
@@ -57,6 +57,7 @@ namespace socketx{
             auto it = std::find_if(pollfdList.begin(),pollfdList.end(),
                                     [eventfd](struct pollfd &pollfd_){return eventfd==pollfd_.fd;});
             pollfdList.erase(it);
+            eventsMap.erase(eventfd);
         }
         else{
             printf("Poller::deleteEvent error! No such an event...\n");

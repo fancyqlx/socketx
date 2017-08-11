@@ -28,7 +28,7 @@ namespace socketx{
             }
 
         private:
-            std::vector<Event *> eventsList;
+            //std::vector<Event *> eventsList;
             std::vector<struct pollfd> pollfdList;
             std::map<int, Event*> eventsMap; 
 

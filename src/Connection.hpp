@@ -21,6 +21,9 @@ namespace socketx{
             void registWriteEvents(){
                 event_->enableWriting();
             }
+            void unregist(){
+                event_->deleteEvent();
+            }
 
             /*Handle events*/
             void handleRead();

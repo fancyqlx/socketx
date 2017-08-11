@@ -64,14 +64,28 @@ namespace socketx{
         public:
             Message()=default;
 
+            ~Message(){
+                delete data;
+            }
+
             Message(void * data_, size_t size_){
                 msize = size_;
                 data = (char *)data_;
             }
 
+            Message(const Message &msg){
+                this->msize = msg.getSize();
+                this->data = new char[this->msize];                   
+                memcpy(this->data,msg.getData(),msize);
+            }
+
             Message& operator=(const Message &msg){
-                msize = msg.getSize();
-                data = msg.getData();
+                if(this!=&msg){
+                    delete this->data;
+                    msize = msg.getSize();
+                    this->data = new char[this->msize];                   
+                    memcpy(this->data,msg.getData(),msize);
+                }
                 return *this;
             }
 

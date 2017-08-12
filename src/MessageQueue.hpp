@@ -14,7 +14,9 @@ namespace socketx{
 
             void addConnection(std::shared_ptr<Connection> conn);
             void removeConnection(std::shared_ptr<Connection> conn);
-
+            bool empty() const{
+                return queue_.empty();
+            }
 
         private:
             squeue<Message> queue_;

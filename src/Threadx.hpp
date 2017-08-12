@@ -157,7 +157,7 @@ namespace socketx{
             int getThreadNum(){
                 return thread_num;
             }
-            int getIdelThreadNum(){
+            int getIdleThreadNum(){
                 return idleThreadNum;
             }
 

@@ -153,6 +153,7 @@ namespace socketx{
             ThreadPool(size_t num=std::thread::hardware_concurrency());
             virtual ~ThreadPool();
 
+            void addThread();
             /*Submit a task f to tasks queue, then wait for the return value.*/
             template<typename F>
             auto submit(F f) -> std::future<typename std::result_of<F()>::type>;

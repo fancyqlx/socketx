@@ -35,6 +35,10 @@ namespace socketx{
         }
     }
 
+    void ThreadPool::addThread(){
+       workers.push_back(std::thread(&ThreadPool::worker,this));
+    }
+
     ThreadPool::~ThreadPool(){
         done = true;
         for(std::thread &x:workers)

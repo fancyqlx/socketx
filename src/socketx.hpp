@@ -11,6 +11,6 @@
 #include "Threadx.hpp"
 #include "Timer.hpp"
 #include "utilx.hpp"
-
+#include "MessageQueue.hpp"
 
 #endif

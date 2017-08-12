@@ -32,7 +32,4 @@ namespace socketx{
         else
             sendList.erase(it);
     }
-
-
-
 }

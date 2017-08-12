@@ -146,12 +146,20 @@ namespace socketx{
             socketx::squeue<std::function<void()>> tasks;
             size_t thread_num;
             std::atomic<bool> done;
+            std::atomic<int> idleThreadNum;
 
             /*Get a task from tasks queue*/
             void worker();
         public:
             ThreadPool(size_t num=std::thread::hardware_concurrency());
             virtual ~ThreadPool();
+
+            int getThreadNum(){
+                return thread_num;
+            }
+            int getIdelThreadNum(){
+                return idleThreadNum;
+            }
 
             void addThread();
             /*Submit a task f to tasks queue, then wait for the return value.*/

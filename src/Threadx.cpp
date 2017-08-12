@@ -22,27 +22,35 @@ namespace socketx{
     void ThreadPool::worker(){
         while(!done){
             std::function<void()> task;
-            if(tasks.try_pop(task))
+            if(tasks.try_pop(task)){
+                --idleThreadNum;
                 task();
-            else
+                ++idleThreadNum;
+            }
+            else{
                 std::this_thread::yield();
+            }
         }
     }
     
-    ThreadPool::ThreadPool(size_t num):thread_num(num),done(false){
+    ThreadPool::ThreadPool(size_t num)
+    :thread_num(num),done(false),
+    idleThreadNum(thread_num){
         for(size_t i=0;i<num;++i){
             workers.push_back(std::thread(&ThreadPool::worker,this));
         }
     }
 
     void ThreadPool::addThread(){
-       workers.push_back(std::thread(&ThreadPool::worker,this));
+        ++idleThreadNum;
+        ++thread_num;
+        workers.push_back(std::thread(&ThreadPool::worker,this));
     }
 
     ThreadPool::~ThreadPool(){
         done = true;
         for(std::thread &x:workers)
-            x.join();
+            if(x.joinable()) x.join();
     }
 
 }

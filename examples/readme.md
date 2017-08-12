@@ -6,3 +6,4 @@ There are few simple examples in this subdirectory. For some complicated example
 - [Minerx (A distributed bitcoin miner)](https://github.com/fancyqlx/Minerx)
 - [TinyHttpx (A simple http server)](https://github.com/fancyqlx/TinyHttpx)
 - [DAWTA](https://github.com/fancyqlx/DAWTA)
+- [PubSub](https://github.com/fancyqlx/PubSub)

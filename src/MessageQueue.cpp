@@ -3,6 +3,7 @@
 namespace socketx{
 
     ssize_t MessageQueue::send(){
+        if(sendList.size()==0) return -1;
         Message msg;
         bool flag = queue_.try_pop(msg);
         if(flag){

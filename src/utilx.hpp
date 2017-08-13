@@ -62,7 +62,7 @@ namespace socketx{
             char *data;
 
         public:
-            Message()=default;
+            Message():msize(0),data(nullptr){};
 
             ~Message(){
                 if(data != nullptr){

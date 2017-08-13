@@ -57,7 +57,7 @@ namespace socketx{
             void handleAccept();
         private:
             std::string port_;
-            Event *event_;
+            std::shared_ptr<Event> event_;
             EventLoop *loop_;
 
             std::function<void(int)> newConnectionFunc;

@@ -43,7 +43,7 @@ namespace socketx{
     ServerSocket::ServerSocket(EventLoop *loop, std::string port):
         loop_(loop),
         port_(port),
-        event_(new Event(loop,-1)){
+        event_(std::make_shared<Event>(loop,-1)){ 
             event_->setReadFunc(std::bind(&ServerSocket::handleAccept,this));
         }
 

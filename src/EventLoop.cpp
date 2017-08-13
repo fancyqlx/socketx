@@ -17,7 +17,7 @@ namespace socketx{
         printf("EventLoop starts......\n");
         while(!stop){
             activeEvents.clear();
-            activeEvents = poller->poll();
+            activeEvents = poller->poll(); 
             for(auto it=activeEvents.begin();it!=activeEvents.end();++it){
                 (*it)->handleEvent();
             }

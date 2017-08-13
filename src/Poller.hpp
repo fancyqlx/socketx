@@ -17,11 +17,11 @@ namespace socketx{
             /*Wrapper function of Linux/Unix poll
             * Return a vector of active events
             */
-            std::vector<Event *> poll();
+            std::vector<std::shared_ptr<Event>> poll();
 
             /*Update or delete an event from eventList*/
-            void updateEvent(Event *event);
-            void deleteEvent(Event *event);
+            void updateEvent(std::shared_ptr<Event> event);
+            void deleteEvent(std::shared_ptr<Event> event);
 
             void setTimeout(int timeout){
                 timeout_ = timeout;
@@ -30,7 +30,7 @@ namespace socketx{
         private:
             //std::vector<Event *> eventsList;
             std::vector<struct pollfd> pollfdList;
-            std::map<int, Event*> eventsMap; 
+            std::map<int, std::shared_ptr<Event>> eventsMap; 
 
             int timeout_;
     };

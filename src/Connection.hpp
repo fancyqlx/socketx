@@ -73,7 +73,7 @@ namespace socketx{
 
 
         private:
-            Event *event_;
+            std::shared_ptr<Event> event_;
             EventLoop *loop_;
 
             bool readFun;

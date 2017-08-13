@@ -3,12 +3,11 @@
 namespace socketx{
 
     EventLoop::EventLoop():
-        poller(new Poller()),stop(false){
+        poller(std::make_shared<Poller>()),stop(false){
             IgnoreSIGPIPE();
         }
 
     EventLoop::~EventLoop(){
-        delete poller;
     }
 
     /* Main Loop
@@ -27,11 +26,11 @@ namespace socketx{
     }
 
     /*Update events by invoke poller's function*/
-    void EventLoop::updateEvent(Event *event){
+    void EventLoop::updateEvent(std::shared_ptr<Event> event){
         poller->updateEvent(event);
     }
 
-    void EventLoop::deleteEvent(Event *event){
+    void EventLoop::deleteEvent(std::shared_ptr<Event> event){
         poller->deleteEvent(event);
     }
 

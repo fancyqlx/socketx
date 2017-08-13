@@ -9,7 +9,7 @@ namespace socketx{
     /*Forward declaration*/
     class EventLoop;
 
-    class Event{
+    class Event:public std::enable_shared_from_this<Event>{
         public:
             Event(EventLoop *loop, int fd);
             ~Event();

@@ -4,12 +4,11 @@ namespace socketx{
 
     Timer::Timer(EventLoop *loop):
         loop_(loop), fd_(-1),
-        event_(new Event(loop,fd_)){
+        event_(std::make_shared<Event>(loop,fd_)){
     }
 
     Timer::~Timer(){
         clear();
-        delete event_;
     }
 
     void Timer::addTimer(size_t start, size_t interval, const std::function<void()> &func){

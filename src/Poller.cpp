@@ -13,11 +13,11 @@ namespace socketx{
     /*Wrapper function of Linux/Unix poll
     * Return a vector of active events
     */
-    std::vector<Event *> Poller::poll(){
+    std::vector<std::shared_ptr<Event>> Poller::poll(){
         int num = ::poll(&*pollfdList.begin(),pollfdList.size(),timeout_);
         
         /*Construct active events vector*/
-        std::vector<Event *> vec;
+        std::vector<std::shared_ptr<Event>> vec;
         for(auto it=pollfdList.begin();it!=pollfdList.end();++it){
             if(it->revents>0){
                 auto events = eventsMap[it->fd];
@@ -29,7 +29,7 @@ namespace socketx{
     }
 
     /*Update or delete an event from eventList*/
-    void Poller::updateEvent(Event *event){
+    void Poller::updateEvent(std::shared_ptr<Event> event){
         int eventfd = event->getFD();
         if(eventsMap.count(eventfd)){
             /*Update pollfdList*/
@@ -44,14 +44,14 @@ namespace socketx{
             /*Update eventsList*/
             //eventsList.push_back(event);
             /*Update pollfdList*/
-            struct pollfd pollfd_;
+            struct pollfd pollfd_; 
             pollfd_.fd = eventfd;
             pollfd_.events = event->getEvents();
             pollfd_.revents = event->getRevents();
             pollfdList.push_back(pollfd_);
         }
     }
-    void Poller::deleteEvent(Event *event){
+    void Poller::deleteEvent(std::shared_ptr<Event> event){
         int eventfd = event->getFD();
         if(eventsMap.count(eventfd)){
             auto it = std::find_if(pollfdList.begin(),pollfdList.end(),

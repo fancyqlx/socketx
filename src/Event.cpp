@@ -31,22 +31,22 @@ namespace socketx{
     /*Regist Read and Write events*/
     void Event::enableReading(){
         events_ |= POLLIN | POLLPRI;
-        loop_->updateEvent(this);
+        loop_->updateEvent(shared_from_this());
     }
     void Event::enableWriting(){
         events_ |= POLLOUT | POLLWRNORM | POLLWRBAND;
-        loop_->updateEvent(this);
+        loop_->updateEvent(shared_from_this());
     }
     void Event::disableReading(){
         events_ &= ~(POLLIN | POLLPRI);
-        loop_->updateEvent(this);
+        loop_->updateEvent(shared_from_this());
     }
     void Event::disableWriting(){
         events_ &= ~(POLLOUT | POLLWRNORM | POLLWRBAND);
-        loop_->updateEvent(this);
+        loop_->updateEvent(shared_from_this());
     }
 
     void Event::deleteEvent(){
-        loop_->deleteEvent(this);
+        loop_->deleteEvent(shared_from_this());
     }
 }

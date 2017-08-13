@@ -6,7 +6,7 @@ namespace socketx{
     Server::Server(EventLoop *loop, std::string port):
         loop_(loop),
         port_(port),
-        socket_(new ServerSocket(loop, port)){
+        socket_(std::make_shared<ServerSocket>(loop, port)){
             socket_->setNewConnctionFunc(std::bind(&Server::newConnection, this, std::placeholders::_1));
         }
 
@@ -14,7 +14,6 @@ namespace socketx{
         for(auto it=connectionsMap.begin();it!=connectionsMap.end();++it){
             it->second->handleClose();
         }
-        delete socket_;
     }
  
     void Server::start(){

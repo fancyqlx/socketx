@@ -6,12 +6,11 @@ namespace socketx{
         :loop_(loop),
         hostname_(hostname),
         port_(port),
-       socket_(new ClientSocket(hostname,port)){
+       socket_(std::make_shared<ClientSocket>(hostname,port)){
 
     }
 
     Client::~Client(){
-        delete socket_;
     }
 
      /*Start to connect to a host. 

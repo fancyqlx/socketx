@@ -34,7 +34,7 @@ namespace socketx{
         private: 
             EventLoop *loop_;
             int fd_;
-            Event *event_;
+            std::shared_ptr<Event> event_;
             std::function<void()> handleTimerFunc;
     };
 }

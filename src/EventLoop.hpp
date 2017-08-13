@@ -23,12 +23,12 @@ namespace socketx{
             }
 
             /*Update events by invoke poller's function*/
-            void updateEvent(Event *event);
-            void deleteEvent(Event *event);
+            void updateEvent(std::shared_ptr<Event> event);
+            void deleteEvent(std::shared_ptr<Event> event);
 
         private:
-            std::vector<Event*> activeEvents;
-            socketx::Poller *poller;
+            std::vector<std::shared_ptr<Event>> activeEvents;
+            std::shared_ptr<socketx::Poller> poller;
             std::atomic<bool> stop;
     };
 }

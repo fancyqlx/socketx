@@ -60,7 +60,7 @@ namespace socketx{
             void newConnection(int fd);
 
             EventLoop *loop_;
-            ServerSocket *socket_;
+            std::shared_ptr<ServerSocket> socket_;
 
             std::string port_;
 

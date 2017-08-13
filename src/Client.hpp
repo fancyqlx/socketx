@@ -65,7 +65,7 @@ namespace socketx{
             EventLoop *loop_;
             std::string hostname_;
             std::string port_;
-            ClientSocket * socket_;
+            std::shared_ptr<ClientSocket> socket_;
             std::shared_ptr<Connection> currentConn;
             std::map<int, std::shared_ptr<Connection>> connectionsMap;
             

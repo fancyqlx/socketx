@@ -65,12 +65,19 @@ namespace socketx{
             Message()=default;
 
             ~Message(){
-                delete data;
+                if(data != nullptr) delete data;
             }
 
             Message(void * data_, size_t size_){
                 msize = size_;
-                data = (char *)data_;
+                data = new char[this->msize];
+                memcpy(this->data,data_,msize);
+            }
+
+            Message(const std::string &data_){
+                this->msize = data_.size()+1;
+                this->data = new char[this->msize];
+                memcpy(this->data,data_.c_str(),msize);
             }
 
             Message(const Message &msg){
@@ -79,12 +86,30 @@ namespace socketx{
                 memcpy(this->data,msg.getData(),msize);
             }
 
+            Message(Message &&msg){
+                this->msize = msg.getSize();
+                this->data = msg.getData();    
+                msg.msize = 0;
+                msg.data = nullptr;
+            }
+
             Message& operator=(const Message &msg){
                 if(this!=&msg){
                     delete this->data;
                     msize = msg.getSize();
                     this->data = new char[this->msize];                   
                     memcpy(this->data,msg.getData(),msize);
+                }
+                return *this;
+            }
+
+            Message& operator=(Message &&msg){
+                if(this!=&msg){
+                    delete this->data;
+                    msize = msg.getSize();
+                    this->data = msg.getData();
+                    msg.msize = 0;
+                    msg.data = nullptr;             
                 }
                 return *this;
             }

@@ -24,7 +24,8 @@ class EchoClient{
             std::string line;
             if(std::getline(std::cin,line)){
                 line += '\n';
-                clientConn->send(line.c_str(),line.size());
+                socketx::Message msg(line);
+                clientConn->sendmsg(msg);
             }
             else
                 printf("Read error from stdin....\n");
@@ -37,9 +38,12 @@ class EchoClient{
             clientConn = conn;
         }
         void handleReadEvents(std::shared_ptr<socketx::Connection> conn){
-            std::string line = conn->readline();
-            if(line.size()==0) conn->handleClose();
-            else std::cout<<line<<std::endl;
+            socketx::Message msg = conn->recvmsg();
+            if(msg.getSize()==0){
+                conn->handleClose();
+                return;
+            }else
+            std::cout<<std::string(msg.getData())<<std::endl;
         }
         void handleCloseEvents(std::shared_ptr<socketx::Connection> conn){
             printf("Close connection...\n");

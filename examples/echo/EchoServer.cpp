@@ -19,13 +19,13 @@ class EchoServer{
             server_->setHandleReadEvents(std::bind(&EchoServer::handleReadEvents, this,  std::placeholders::_1));
         }
         void handleReadEvents(std::shared_ptr<socketx::Connection> conn){
-            std::string line = conn->readline();
-            if(line.size()==0){
+            socketx::Message msg = conn->recvmsg();
+            if(msg.getSize()==0){
                 conn->handleClose();
                 return;
             }else
-                std::cout<<line<<std::endl;
-            conn->send(line.c_str(),line.size());
+            std::cout<<std::string(msg.getData())<<std::endl;
+            conn->sendmsg(msg);
         }
         void handleCloseEvents(std::shared_ptr<socketx::Connection> conn){
             printf("Close connection...\n");

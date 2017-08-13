@@ -24,7 +24,7 @@ socketx is based on I/O multiplexing and thread pool. It is a simplified reactor
 - [Minerx (A distributed bitcoin miner)](https://github.com/fancyqlx/Minerx)
 - [TinyHttpx (A simple http server)](https://github.com/fancyqlx/TinyHttpx)
 - [DAWTA](https://github.com/fancyqlx/DAWTA)
-- [PubSub](https://github.com/fancyqlx/PubSub)
+- [PubSub (A simple publish-subscribe system)](https://github.com/fancyqlx/PubSub)
 
 ## New socketx is coming!
 ## QuickStart

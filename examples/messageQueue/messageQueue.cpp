@@ -7,9 +7,9 @@ void stdinReadEvents(std::shared_ptr<socketx::Connection> conn){
     std::string line;
     if(std::getline(std::cin,line)){
         socketx::Message msg(line);
-        //q.recv(msg);
-        //q.send();
-        stdoutConn->sendmsg(msg);
+        q.recv(msg);
+        q.send();
+        //stdoutConn->sendmsg(msg);
         printf("\n");
     }
     else

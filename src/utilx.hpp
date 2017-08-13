@@ -98,7 +98,7 @@ namespace socketx{
 
             Message& operator=(const Message &msg){
                 if(this!=&msg){
-                    delete this->data;
+                   if(this->data!=nullptr) delete this->data;
                     msize = msg.getSize();
                     this->data = new char[this->msize];                   
                     memcpy(this->data,msg.getData(),msize);
@@ -108,7 +108,7 @@ namespace socketx{
 
             Message& operator=(Message &&msg){
                 if(this!=&msg){
-                    delete this->data;
+                    if(this->data!=nullptr) delete this->data;
                     msize = msg.getSize();
                     this->data = msg.getData();
                     msg.msize = 0;

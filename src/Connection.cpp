@@ -4,7 +4,7 @@ namespace socketx{
 
     Connection::Connection(EventLoop *loop, int fd):
         loop_(loop),
-        Socket(fd),
+        Socket(fd), buffer_(std::make_shared<Buffer>(fd)),
         event_(std::make_shared<Event>(loop,fd)),
         readFun(false),writeFun(false),closeFun(false){
         /*Set callback functions*/
@@ -13,6 +13,7 @@ namespace socketx{
         event_->setErrorFunc(std::bind(&Connection::handleError, this));
         /*Initialize internal buffer*/
         rio_readinitb(socketfd);
+        setNonblocking(socketfd);
     }
 
     Connection::~Connection(){
@@ -29,8 +30,12 @@ namespace socketx{
     void Connection::handleWrite(){
         if(writeFun)
             handleWriteEvents(shared_from_this());
-        else
-            printf("No function for write events...\n");
+        else{
+            if(buffer_->bufferWriter()>0){
+                unregistWriteEvents();
+            }
+        }
+            
     }
  
     void Connection::handleError(){
@@ -212,4 +217,42 @@ namespace socketx{
         }
         else return Message(nullptr,0);
     }
+
+    ssize_t Connection::sendToBuffer(const std::string &data){
+        ssize_t var = buffer_->bufferReader(data);
+        if(data.size()!=0) registWriteEvents();
+        return var;
+    }
+    ssize_t Connection::sendmsgToBuffer(const Message &msg){
+
+
+    }
+
+    ssize_t Buffer::bufferWriter(){
+        size_t num = getDataSize();
+        size_t nwritten = 0;
+        if ((nwritten = ::write(socketfd, outputIt, num)) <= 0) {
+            if (errno == EINTR)  
+                nwritten = 0;    
+            else
+                return -1;       
+        }
+        outputIt += nwritten;
+        if(outputIt==inputIt){
+            outputIt=inputIt=buffer.begin();
+            /*This means buffer is empty, we need to 
+            * unregist the writeEvents.
+            */
+            return 1;
+        }
+        return 0;
+    }
+
+    ssize_t Buffer::bufferReader(const std::string &data){
+        auto it = std::copy(data.begin(),data.end(),inputIt);
+        if(it>buffer.end()) return -1;
+        inputIt = it;
+        return data.size();
+    }
+
 }

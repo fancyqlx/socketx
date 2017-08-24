@@ -16,6 +16,7 @@
 #include <sys/stropts.h>
 #include <sys/timerfd.h>
 #include <time.h>
+#include <fcntl.h>
 
 #include <string>
 #include <cstring>
@@ -44,6 +45,7 @@ namespace socketx{
     #define RIO_BUFSIZE 8192
     #define MAXLINE 8192
     #define LISTENQ 1024
+    const size_t MAX_BUFSIZE = 8192;
 
     const int INFTIM = -1;
 

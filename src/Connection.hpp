@@ -8,6 +8,36 @@
 namespace socketx{
 
     /* Forward declaration*/
+    /*Buffer*/
+    class Buffer{
+        public:
+            Buffer(int fd):socketfd(fd),buffer(std::vector<char>(MAX_BUFSIZE))
+            ,inputIt(buffer.begin()), outputIt(buffer.begin()){
+
+            }
+
+            ssize_t bufferWriter();
+            ssize_t bufferReader(const std::string &data);
+            size_t getFreesize(){
+                return buffer.end()-inputIt;
+            }
+
+            size_t getDataSize(){
+                return inputIt-outputIt;
+            }
+
+        private:
+            std::vector<char> buffer;
+            int socketfd;
+            size_t tooidx;
+            size_t toiidx;
+            std::vector<char>::iterator inputIt;
+            std::vector<char>::iterator outputIt;
+            
+
+    };
+
+
 
     class Connection: public Socket, public std::enable_shared_from_this<Connection>{
         public:
@@ -20,6 +50,12 @@ namespace socketx{
             }
             void registWriteEvents(){
                 event_->enableWriting();
+            }
+            void unregistReadEvents(){
+                event_->disableReading();
+            }
+            void unregistWriteEvents(){
+                event_->disableWriting();
             }
             void unregist(){
                 event_->deleteEvent();
@@ -71,6 +107,9 @@ namespace socketx{
             Message recvmsgFromBuffer();
             Message recvmsg();
 
+            ssize_t sendToBuffer(const std::string &data);
+            ssize_t sendmsgToBuffer(const Message &msg);
+
 
         private:
             std::shared_ptr<Event> event_;
@@ -84,6 +123,7 @@ namespace socketx{
             std::function<void(std::shared_ptr<Connection>)> handleCloseEvents;
 
             rio_t rio;
+            std::shared_ptr<Buffer> buffer_;
 
             /*Connect the file descriptor to rio struct*/
             void rio_readinitb(int fd);
@@ -98,6 +138,10 @@ namespace socketx{
             */
             ssize_t rio_read(char *usrbuf, size_t n); 
     };
+
+
+    
+
 
 
 }

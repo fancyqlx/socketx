@@ -30,6 +30,9 @@ namespace socketx{
             int getFD(){
                 return socketfd;
             }
+
+            void setNonblocking(int fd);
+
             int closeConn();            
     };
 

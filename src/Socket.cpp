@@ -35,6 +35,11 @@ namespace socketx{
         return ntohs(addr.sin_port);
     }
 
+    void Socket::setNonblocking(int fd){
+        int var = fcntl(fd,F_GETFL, 0);
+        fcntl(fd,F_SETFL, val | O_NONBLOCK); 
+    }
+
     int Socket::closeConn(){
         return ::close(socketfd);
     }

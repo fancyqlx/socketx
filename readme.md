@@ -4,6 +4,8 @@
 
 **TODO: We are going to complete the examples of new version of socketx and fix bugs :)**
 
+**TODO: Buffer...**
+
 # socketx
 
 socketx is a library for network programming. It is writen by C/C++ and aims to provide C++ interfaces for users. This library is originally used for some simple projects of myself when I was learning networking programming. You can find more details in some of [Examples](./examples).

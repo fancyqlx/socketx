@@ -224,22 +224,22 @@ namespace socketx{
         return var;
     }
     ssize_t Connection::sendmsgToBuffer(const Message &msg){
-
-
+        printf("haven't finished....\n");
+        return -1;
     }
 
     ssize_t Buffer::bufferWriter(){
         size_t num = getDataSize();
         size_t nwritten = 0;
-        if ((nwritten = ::write(socketfd, outputIt, num)) <= 0) {
+        if ((nwritten = ::write(socketfd, &buffer[oidx], num)) <= 0) {
             if (errno == EINTR)  
                 nwritten = 0;    
             else
                 return -1;       
         }
-        outputIt += nwritten;
-        if(outputIt==inputIt){
-            outputIt=inputIt=buffer.begin();
+        oidx += nwritten;
+        if(oidx==iidx){
+            oidx=iidx=0;
             /*This means buffer is empty, we need to 
             * unregist the writeEvents.
             */
@@ -249,9 +249,9 @@ namespace socketx{
     }
 
     ssize_t Buffer::bufferReader(const std::string &data){
-        auto it = std::copy(data.begin(),data.end(),inputIt);
+        auto it = std::copy(data.begin(),data.end(),buffer.begin()+iidx);
         if(it>buffer.end()) return -1;
-        inputIt = it;
+        iidx += data.size();
         return data.size();
     }
 

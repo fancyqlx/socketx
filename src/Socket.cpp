@@ -37,7 +37,7 @@ namespace socketx{
 
     void Socket::setNonblocking(int fd){
         int var = fcntl(fd,F_GETFL, 0);
-        fcntl(fd,F_SETFL, val | O_NONBLOCK); 
+        fcntl(fd,F_SETFL, var | O_NONBLOCK); 
     }
 
     int Socket::closeConn(){

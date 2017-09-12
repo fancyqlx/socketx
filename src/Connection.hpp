@@ -11,30 +11,27 @@ namespace socketx{
     /*Buffer*/
     class Buffer{
         public:
-            Buffer(int fd):socketfd(fd),buffer(std::vector<char>(MAX_BUFSIZE))
-            ,inputIt(buffer.begin()), outputIt(buffer.begin()){
+            Buffer(int fd):
+            socketfd(fd),buffer(std::vector<char>(MAX_BUFSIZE))
+            ,oidx(0),iidx(0){
 
             }
 
             ssize_t bufferWriter();
             ssize_t bufferReader(const std::string &data);
             size_t getFreesize(){
-                return buffer.end()-inputIt;
+                return buffer.size()-iidx;
             }
 
             size_t getDataSize(){
-                return inputIt-outputIt;
+                return iidx-oidx;
             }
 
         private:
             std::vector<char> buffer;
             int socketfd;
-            size_t tooidx;
-            size_t toiidx;
-            std::vector<char>::iterator inputIt;
-            std::vector<char>::iterator outputIt;
-            
-
+            size_t oidx;
+            size_t iidx;
     };
 
 
@@ -138,12 +135,6 @@ namespace socketx{
             */
             ssize_t rio_read(char *usrbuf, size_t n); 
     };
-
-
-    
-
-
-
 }
 
 
